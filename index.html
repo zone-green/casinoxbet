@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Casino de la Esquina</title>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@600;800&family=Work+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--felt:#0f3d2e;--felt2:#0a2c21;--brass:#c9a24a;--ivory:#f3ecd9;--red:#9b1d2e;--ink:#14110f;--neon:#ff3b6b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--felt:#0f3d2e}}
+:root[data-theme="dark"]{--felt:#0f3d2e}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{margin:0;background:radial-gradient(ellipse at 50% 0,#6b1a38 0,transparent 60%),repeating-linear-gradient(45deg,rgba(201,162,74,.08) 0 1px,transparent 1px 26px),repeating-linear-gradient(-45deg,rgba(201,162,74,.08) 0 1px,transparent 1px 26px),#24081a;background-attachment:fixed;color:var(--ivory);font-family:'Work Sans',system-ui,sans-serif;min-height:100vh}
+main{max-width:520px;margin:0 auto;padding:16px}
+h1,h2,h3{font-family:'Bodoni Moda',Georgia,serif;margin:0}
+h1{font-size:2rem;font-weight:800}
+h2{font-size:1.4rem}
+h3{font-size:1.25rem;margin:22px 0 8px}
+.sub{color:var(--brass);margin:2px 0 12px;font-size:.9rem}
+.bank{display:flex;justify-content:space-between;align-items:center;background:var(--ink);border:1px solid var(--brass);border-radius:6px;padding:10px 14px;margin-bottom:6px}
+.bank b{font-family:'Bodoni Moda',Georgia,serif;font-size:1.6rem;color:var(--brass)}
+.bulbs{height:14px;margin:8px 0 4px;background:radial-gradient(circle,#ffd77a 3px,transparent 4px) 0 0/24px 14px repeat-x;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:.35}}
+button{font:inherit;cursor:pointer;border:1px solid var(--brass);background:transparent;color:var(--ivory);padding:10px 12px;border-radius:6px;min-height:44px}
+button:focus-visible,input:focus-visible{outline:3px solid var(--ivory);outline-offset:2px}
+button[aria-pressed="true"]{background:var(--brass);color:var(--ink);font-weight:600}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tile{background:var(--felt);text-align:left;padding:12px;display:flex;flex-direction:column;gap:4px;border-color:#2c6b54}
+.tile b{font-size:1rem}.tile span{font-size:.8rem;color:#b9c9bf}
+section.panel{background:var(--felt);border:1px solid #2c6b54;border-radius:8px;padding:16px;margin-top:10px}
+.top{display:flex;align-items:center;gap:12px}
+.desc{color:#b9c9bf;font-size:.9rem;margin:6px 0 0}
+.label{font-size:.85rem;color:var(--brass);margin:14px 0 6px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row button{flex:1 1 28%}
+.chips button{flex:1 1 20%;border-radius:999px}
+.show{display:flex;justify-content:center;align-items:center;gap:12px;min-height:110px;flex-wrap:wrap}
+.ball{width:104px;height:104px;border-radius:50%;display:grid;place-items:center;font-family:'Bodoni Moda',Georgia,serif;font-size:2.6rem;font-weight:800;border:4px solid var(--brass);background:var(--ink)}
+.ball.red{background:var(--red)}.ball.green{background:#1d7a4f}
+.die{width:76px;height:76px;border-radius:12px;background:var(--ivory);color:var(--ink);display:grid;place-items:center;font-size:3.2rem;line-height:1}
+.die.s{font-size:2.2rem}
+.card{width:58px;height:84px;border-radius:8px;background:var(--ivory);color:var(--ink);display:grid;place-items:center;font-weight:800;font-size:1.3rem;border:2px solid transparent;padding:0}
+.card.r{color:var(--red)}.card.back{background:var(--red);color:var(--ivory)}
+button.card{min-height:84px;color:var(--ink)}
+button.card.r{color:var(--red)}
+button.card.hold{border-color:var(--brass);box-shadow:0 0 0 2px var(--brass);transform:translateY(-8px)}
+.hand{display:flex;gap:6px;flex-wrap:wrap;min-height:92px;align-items:center}
+.spin{animation:shake .12s linear infinite}
+@keyframes shake{50%{transform:rotate(5deg) scale(1.03)}}
+.go{width:100%;margin-top:14px;background:var(--brass);color:var(--ink);font-weight:600;font-size:1.05rem}
+.go:disabled{opacity:.5}
+input[type=number],input[type=text]{width:100%;font:inherit;min-height:44px;padding:8px 10px;border-radius:6px;border:1px solid var(--brass);background:var(--ink);color:var(--ivory)}
+#msg{min-height:3em;margin-top:12px;font-weight:600}
+.win{color:#9be3b5}.lose{color:#f0a0a8}
+.foot{font-size:.8rem;color:#b9c9bf;margin-top:20px;line-height:1.5}
+.foot button{min-height:36px;font-size:.85rem;margin-top:8px}
+[hidden]{display:none!important}
+#gate{position:fixed;inset:0;z-index:50;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;transition:background .9s ease .5s}
+.door{position:absolute;top:0;bottom:0;width:50%;background:repeating-linear-gradient(90deg,#5a0f1b 0 18px,#3d0912 18px 36px);border:3px solid var(--brass);transition:transform 1.3s cubic-bezier(.7,0,.2,1) .2s}
+.door.l{left:0}.door.r{right:0}
+.door::after{content:"";position:absolute;top:50%;width:16px;height:16px;border-radius:50%;background:var(--brass)}
+.door.l::after{right:14px}.door.r::after{left:14px}
+.sign{position:relative;z-index:2;transition:opacity .5s}
+.neon{font-family:'Bodoni Moda',Georgia,serif;font-weight:800;font-size:clamp(3rem,16vw,5.5rem);letter-spacing:.06em;color:#ffe3ea;text-shadow:0 0 8px var(--neon),0 0 24px var(--neon),0 0 48px var(--neon);animation:flick 3s infinite}
+@keyframes flick{0%,18%,22%,62%,100%{opacity:1}20%,60%{opacity:.55}}
+.sign p{color:var(--brass);margin:8px 0 22px}
+.sign button{background:var(--brass);color:var(--ink);font-weight:600;font-size:1.1rem;padding:12px 32px}
+#gate.open{background:transparent;pointer-events:none}
+#gate.open .l{transform:translateX(-101%)}#gate.open .r{transform:translateX(101%)}
+#gate.open .sign{opacity:0}
+@media (prefers-reduced-motion:reduce){.spin,.bulbs,.neon{animation:none}.door,#gate,.sign{transition-duration:.01s;transition-delay:0s}}
+#pk,#adm{position:fixed;inset:0;z-index:40;background:radial-gradient(ellipse at 50% 40%,#17624a,#0a2c21 70%);display:flex;flex-direction:column;padding:calc(10px + env(safe-area-inset-top,0px)) 14px calc(12px + env(safe-area-inset-bottom,0px));overflow:auto}
+.pkbar{display:flex;align-items:center;justify-content:space-between;gap:8px;max-width:520px;width:100%;margin:0 auto}
+.pkt{flex:1;display:flex;flex-direction:column;justify-content:center;max-width:520px;width:100%;margin:0 auto}
+#pk .hand{justify-content:center}
+.pot{text-align:center;color:var(--brass);margin:6px 0}
+.pk-info{text-align:center;min-height:3em;font-weight:600;margin-top:8px}
+#pkc{max-width:520px;width:100%;margin:0 auto}
+.card.ph{background:transparent;border:2px dashed #2c6b54;color:transparent}
+.wtop{display:flex;justify-content:space-between;align-items:center}
+.tag{border:1px solid var(--brass);color:var(--brass);border-radius:4px;padding:1px 6px;font-size:.75rem}
+.addr{font-size:.8rem;color:#b9c9bf;margin:6px 0 10px;word-break:break-all}
+.wh{font-size:.8rem;color:#b9c9bf;margin-top:10px;line-height:1.5}
+#wad{margin-top:8px}
+.die.xs{width:52px;height:60px;font-size:1.6rem;border-radius:10px}
+.rq{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid #2c6b54;border-radius:6px;padding:8px 10px;margin-bottom:8px}
+.rq .row{flex:0 0 auto;flex-wrap:nowrap}.rq button{min-height:36px;flex:0 0 auto}
+.sub{text-align:center}
+.hdr{padding-top:60px;text-align:center}
+.crown{font-size:2rem;line-height:1;filter:drop-shadow(0 0 8px var(--brass))}
+.ttl{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:nowrap}
+.sd{color:var(--brass);font-size:1.4rem}
+.big{font-size:clamp(2.8rem,15vw,4.6rem);letter-spacing:.06em;color:#ffe9b0;text-shadow:0 0 6px var(--brass),0 0 22px #b8862b,0 3px 0 #7a5a16;margin:0}
+.suits{display:flex;justify-content:center;gap:16px;font-size:1.5rem;font-style:normal;margin:2px 0 6px}
+.suits i{font-style:normal;color:var(--ivory)}.suits .rd{color:#e0455b}
+#bank{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));right:10px;z-index:30;flex-direction:column;align-items:flex-end;gap:6px;margin:0;padding:6px 10px;box-shadow:0 2px 12px rgba(0,0,0,.6)}
+#bank b{font-size:1.25rem}#bank small{color:#b9c9bf}
+#rec0{background:var(--brass);color:var(--ink);font-weight:600;min-height:32px;padding:4px 10px;font-size:.85rem}
+.nav{display:flex;gap:8px;overflow-x:auto;padding:8px 2px;margin:8px 0 4px;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav button{flex:0 0 auto;white-space:nowrap;border-radius:999px;background:rgba(0,0,0,.35)}
+.welcome h2{font-size:1.5rem}
+.rules{margin:10px 0 0;padding-left:20px;line-height:1.8}
+.cat h3{margin-top:6px}
+.die{border-radius:14px;background:linear-gradient(145deg,#fffdf6,#e6dcc0);box-shadow:inset 0 -4px 6px rgba(0,0,0,.18),0 5px 10px rgba(0,0,0,.45)}
+.die.s{background:linear-gradient(#fff 0,#efe5c8 45%,#cdbf96 100%);border:3px solid var(--brass)}
+.pips{grid-template:repeat(3,1fr)/repeat(3,1fr);padding:11px}
+.pips i{width:13px;height:13px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#555,#000);place-self:center}
+.p1 i{grid-area:2/2}
+.p2 i:nth-child(1),.p3 i:nth-child(1),.p4 i:nth-child(1),.p5 i:nth-child(1),.p6 i:nth-child(1){grid-area:1/1}
+.p2 i:nth-child(2){grid-area:3/3}
+.p3 i:nth-child(2){grid-area:2/2}.p3 i:nth-child(3){grid-area:3/3}
+.p4 i:nth-child(2),.p5 i:nth-child(2),.p6 i:nth-child(2){grid-area:1/3}
+.p4 i:nth-child(3),.p5 i:nth-child(3),.p6 i:nth-child(3){grid-area:3/1}
+.p4 i:nth-child(4),.p5 i:nth-child(4),.p6 i:nth-child(4){grid-area:3/3}
+.p5 i:nth-child(5){grid-area:2/2}
+.p6 i:nth-child(5){grid-area:2/1}.p6 i:nth-child(6){grid-area:2/3}
+.card{position:relative;width:62px;height:90px;background:linear-gradient(160deg,#fffdf6,#e9dfc4);box-shadow:0 3px 8px rgba(0,0,0,.45)}
+button.card{min-height:90px}
+.card b{position:absolute;top:5px;left:7px;font-size:.95rem;line-height:1}
+.card em{font-style:normal;font-size:2rem}
+.card.back{background:repeating-linear-gradient(45deg,#9b1d2e 0 6px,#7a1523 6px 12px);border:3px solid var(--ivory);color:transparent}
+.show{min-height:150px}
+.ball{position:relative;isolation:isolate;margin:22px;box-shadow:0 0 0 3px #3a2a0a,0 8px 20px rgba(0,0,0,.6)}
+.ball::before{content:"";position:absolute;inset:-22px;border-radius:50%;z-index:-1;background:repeating-conic-gradient(#9b1d2e 0 9.73deg,#14110f 9.73deg 19.46deg);-webkit-mask:radial-gradient(circle,transparent 54px,#000 55px);mask:radial-gradient(circle,transparent 54px,#000 55px)}
+.chips{gap:10px;justify-content:center}
+.chips button{flex:0 0 58px;width:58px;height:58px;border-radius:50%;padding:0;background:#9b1d2e;border:3px dashed #f3ecd9;box-shadow:inset 0 0 0 4px #9b1d2e,0 3px 6px rgba(0,0,0,.5);font-weight:700}
+.chips button[aria-pressed="true"]{background:var(--brass);color:var(--ink);border-color:var(--ink);box-shadow:inset 0 0 0 4px var(--brass),0 0 0 3px var(--brass)}
+.go{background:linear-gradient(#e6c264,#b8892f);box-shadow:0 3px 0 #7a5a16}
+.go:active{transform:translateY(2px)}
+section.panel{background:radial-gradient(ellipse at 50% 0,#1a6a50,#0f3d2e 72%);box-shadow:inset 0 0 0 3px rgba(201,162,74,.22),0 8px 22px rgba(0,0,0,.45)}
+#reg,#inbox{position:fixed;inset:0;z-index:45;background:rgba(10,3,8,.92);display:grid;place-items:center;padding:20px}
+.regbox{background:var(--felt);border:2px solid var(--brass);border-radius:10px;padding:20px;width:100%;max-width:380px;max-height:90vh;overflow:auto}
+.bellb{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));left:10px;z-index:30;background:var(--ink);border-radius:6px;padding:6px 12px;min-height:40px}
+.bellb.new{animation:blink 1s steps(2) infinite}
+.msgc{border:1px solid #2c6b54;border-radius:6px;padding:8px 10px;margin-bottom:8px;background:var(--felt2)}
+.msgc.un{border-color:var(--brass)}
+.rq.u{flex-direction:column;align-items:stretch}
+.ua{display:grid;grid-template-columns:1fr auto;gap:6px}
+.ua button[data-d="ban"]{grid-column:1/-1}
+.nb{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.nb button{min-height:38px;padding:0;font-weight:700;border-radius:4px;border:1px solid var(--ivory);color:#fff}
+.nb .rr{background:#9b1d2e}.nb .bk{background:#14110f}.nb .gg{background:#1d7a4f}
+.nb button[aria-pressed="true"]{background:var(--brass);color:var(--ink);box-shadow:0 0 0 2px var(--ivory)}
+.coin{width:104px;height:104px;border-radius:50%;display:grid;place-items:center;font-family:'Bodoni Moda',Georgia,serif;font-weight:800;font-size:1.3rem;background:radial-gradient(circle at 35% 30%,#fff1b8,#c9a24a 60%,#8a6a1e);color:#3a2a0a;border:4px solid #7a5a16;box-shadow:0 6px 14px rgba(0,0,0,.5)}
+.ball.cc{font-size:1.2rem;color:#fff;text-shadow:0 1px 3px #000}
+.scrg{display:grid;grid-template-columns:repeat(3,76px);gap:10px;justify-content:center;margin:8px 0}
+.scr{padding:0;color:var(--ink)}.scr.op{box-shadow:0 0 0 3px var(--brass)}
+.memg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0}
+.mc{min-height:64px;font-size:1.8rem;padding:0;background:repeating-linear-gradient(45deg,#9b1d2e 0 6px,#7a1523 6px 12px);border:3px solid var(--ivory);border-radius:8px;color:var(--ivory)}
+.mc.up{background:linear-gradient(160deg,#fffdf6,#e9dfc4)}
+#dep,#wd{flex:1}
+.row+#wp{margin-bottom:6px}
+
+/* Pulido visual general y rueda europea */
+:root{--brass:#e2bd63;--ivory:#fff8e9;--felt:#104b37;--felt2:#09291f}
+body{background:radial-gradient(ellipse at 50% -8%,rgba(180,35,75,.42),transparent 48%),radial-gradient(ellipse at 50% 15%,#173f32 0,transparent 56%),repeating-linear-gradient(135deg,rgba(226,189,99,.045) 0 1px,transparent 1px 30px),#100d12}
+button{transition:transform .16s ease,box-shadow .16s ease,filter .16s ease}
+button:hover:not(:disabled){filter:brightness(1.13);box-shadow:0 5px 14px rgba(0,0,0,.28)}
+button:active:not(:disabled){transform:scale(.97)}
+.tile{min-height:88px;border-radius:12px;background:linear-gradient(145deg,#176447,#0a3024);box-shadow:0 5px 14px rgba(0,0,0,.25);border-color:rgba(226,189,99,.35)}
+.tile b{font-size:1.02rem;color:#fff4d5}.tile span{line-height:1.35}
+section.panel{border-radius:16px;border:1px solid rgba(226,189,99,.5);background:linear-gradient(145deg,rgba(24,101,72,.98),rgba(8,43,31,.98));box-shadow:0 12px 28px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.06)}
+.ball,.coin,.die,.card{transition:filter .2s,transform .2s;filter:drop-shadow(0 5px 5px rgba(0,0,0,.22))}
+.show{gap:14px;padding:12px 4px}.show .die.s{width:82px;height:82px;font-size:2.5rem;border-radius:16px}
+.go{border-radius:12px;letter-spacing:.02em;background:linear-gradient(135deg,#f4d47e,#b9872c);border:1px solid #ffe5a0;color:#211707;box-shadow:0 5px 0 #75551c,0 9px 18px rgba(0,0,0,.25)}
+.go:active:not(:disabled){box-shadow:0 2px 0 #75551c;transform:translateY(3px)}
+.chips button{background:linear-gradient(145deg,#c73548,#771326);border:3px dashed #fff0d2;box-shadow:inset 0 0 0 4px rgba(255,255,255,.08),0 4px 8px #0007}
+.chips button[aria-pressed=true]{background:linear-gradient(145deg,#ffe39a,#c39136);color:#211707}
+.nb{max-width:440px;margin:8px auto}.nb button{min-height:40px;border-radius:7px;box-shadow:inset 0 1px rgba(255,255,255,.12),0 2px 4px #0005}
+.wheel-wrap{position:relative;width:min(82vw,310px);aspect-ratio:1;margin:12px auto 18px;filter:drop-shadow(0 12px 15px rgba(0,0,0,.5))}
+.roulette-wheel{position:absolute;inset:8px;border:9px solid #d5ae58;border-radius:50%;background:repeating-conic-gradient(from -4.86deg,#111 0deg 9.73deg,#a51f34 9.73deg 19.46deg);box-shadow:inset 0 0 0 5px #4a3212,inset 0 0 0 8px #f0d17e,0 0 0 3px #3d260c;overflow:visible;transform:rotate(0deg)}
+.roulette-wheel:before{content:"";position:absolute;inset:4px;border-radius:50%;border:2px solid rgba(255,232,170,.65);pointer-events:none}
+.wheel-labels{position:absolute;inset:0;border-radius:50%}
+.wn{position:absolute;left:50%;top:50%;width:20px;height:22px;display:grid;place-items:center;font-size:9px;font-weight:800;color:#fff;text-shadow:0 1px 2px #000;transform-origin:center center}
+.wn.wr{color:#fff}.wn.wb{color:#fff}.wn.wg{color:#ffe69a}
+.wheel-hub{position:absolute;left:50%;top:50%;width:66px;height:66px;transform:translate(-50%,-50%);border-radius:50%;display:grid;place-items:center;color:#573b0e;font-size:28px;background:radial-gradient(circle at 35% 28%,#fff0b8,#d4a947 58%,#76501b);border:5px solid #f4d98e;box-shadow:0 0 0 5px #4b3210,0 3px 12px #0009}
+.wheel-pointer{position:absolute;z-index:4;left:50%;top:-3px;transform:translateX(-50%);font-size:25px;color:#ffe59a;text-shadow:0 2px 5px #000}
+.wheel-ball{position:absolute;z-index:3;left:50%;top:50%;width:13px;height:13px;margin:-6px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#fff,#dce3e9 60%,#78818b);box-shadow:0 2px 5px #000;transform:translateY(-105px)}
+.roulette-wheel.rolling{animation:wheel-spin 4.2s cubic-bezier(.12,.72,.1,1) forwards}
+.wheel-ball.rolling-ball{animation:ball-orbit 4.2s cubic-bezier(.12,.72,.1,1) forwards}
+@keyframes wheel-spin{from{transform:rotate(0)}to{transform:rotate(var(--stop-angle,1800deg))}}
+@keyframes ball-orbit{0%{transform:rotate(0) translateY(-105px)}75%{transform:rotate(1500deg) translateY(-112px)}100%{transform:rotate(1750deg) translateY(-105px)}}
+.roulette-note{text-align:center;margin-top:10px}
+@media(max-width:380px){main{padding:12px}.wn{font-size:8px;width:17px}.wheel-wrap{width:min(80vw,285px)}.show .die.s{width:68px;height:68px}}
+
+
+/* Vegas Auto Roulette: demostración visual sin apuestas ni premios. */
+.auto-table{margin:12px auto;padding:18px 12px 20px;border-radius:24px;background:radial-gradient(ellipse at 50% 35%,#267c58,#073b2b 68%,#041d16);border:3px solid #d8b45e;box-shadow:inset 0 0 0 4px #593d19,0 12px 24px #0008;overflow:hidden}
+.auto-table .wheel-wrap{width:min(88vw,350px);margin:4px auto 10px}
+.auto-table .roulette-wheel{background:repeating-conic-gradient(from -4.86deg,#101010 0deg 9.73deg,#bd2438 9.73deg 19.46deg)}
+.auto-caption{text-align:center;color:#ffe7a1;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:.78rem}
+.auto-result{margin:12px auto 4px;width:78px;height:78px;border-radius:50%;display:grid;place-items:center;font-size:2rem;font-weight:800;border:4px solid #e5c36e;box-shadow:0 5px 15px #0008}
+.auto-result.red{background:#b51e32}.auto-result.black{background:#171717}.auto-result.green{background:#087b49}
+.auto-help{text-align:center;color:#d7dfd9;font-size:.86rem;line-height:1.45;margin:10px 4px}
+
+</style>
+</head>
+<body>
+<div id="gate">
+<div class="door l"></div><div class="door r"></div>
+<div class="sign"><div class="neon">CASINO</div><p>Las mesas están abiertas</p><button id="enter">Entrar al casino</button></div>
+</div>
+<main>
+<header class="hdr"><div class="crown">👑</div><div class="ttl"><span class="sd">✦</span><h1 class="big">CASINO</h1><span class="sd">✦</span></div><div class="suits"><i>♠</i><i class="rd">♥</i><i>♣</i><i class="rd">♦</i></div></header>
+<p class="sub">Puntos virtuales de práctica · sin dinero real ni premios canjeables.</p>
+<div class="bank" id="bank"><div><b id="bal">20.00</b> <small>puntos</small></div><button id="rec0" hidden>Reiniciar puntos</button></div>
+<section class="panel" id="wcard"><div class="wtop"><b>Puntos virtuales (demo)</b><span class="tag">PRUEBA</span></div><div class="addr">Identificador de demostración: <code id="waddr">WALLET-DEMO-0000</code></div><div class="row"><button id="dep">Reiniciar puntos</button><button id="wd">Canje desactivado</button></div><div class="wh" id="wh"></div></section>
+<section class="panel" id="wp" hidden><div class="label" id="wl"></div><input type="number" id="wa" step="0.5" min="0"><input type="text" id="wad" placeholder="Dirección de destino (de prueba)" autocomplete="off"><button class="go" id="wok">Confirmar</button><p class="desc" id="wm">Simulado: no hay pagos reales conectados.</p></section>
+<div class="bulbs"></div>
+
+<nav class="nav" id="nav"></nav>
+<div id="home"><section class="panel welcome"><h2>¡Bienvenido al Casino<span id="wname"></span>!</h2><p class="desc">Elige una categoría arriba para ver todos sus juegos. Juegas únicamente con puntos virtuales sin valor real.</p><ul class="rules"><li>Los puntos son solo de demostración.</li><li>No hay depósitos ni retiros reales.</li><li>No se pueden comprar ni canjear puntos.</li><li>Juega por diversión y practica.</li></ul></section></div>
+<div id="lobby"></div>
+
+<div id="game" hidden>
+<div class="top"><button id="back">← Lobby</button><h2 id="gtitle"></h2></div>
+<p class="desc" id="gdesc"></p>
+<section class="panel"><div id="stage"></div><div id="msg" role="status" aria-live="polite"></div></section>
+</div>
+
+<p class="foot">Simulación: el puntos es de prueba, no tiene valor y no se puede retirar de verdad.<br><button id="reset">Reiniciar a 20 puntos</button> <button id="adm0">Administrador</button> <button id="swp">Cambiar jugador</button></p>
+</main>
+<button id="bell" class="bellb" hidden>🔔 <b id="bn">0</b></button>
+<div id="reg" hidden><div class="regbox"><h2>Regístrate</h2><p class="desc">Escribe tu nombre para jugar. Si ya te registraste, escribe el mismo nombre para entrar.</p><input type="text" id="regname" maxlength="20" placeholder="Tu nombre" autocomplete="off"><button class="go" id="regok">Entrar a jugar</button><p class="desc" id="regm"></p></div></div>
+<div id="inbox" hidden><div class="regbox"><h2>Mensajes</h2><div id="inbody"></div><button class="go" id="inx">Cerrar</button></div></div>
+<div id="pk" hidden><div class="pkbar"><button id="pkx">← Salir</button><b>Póker Omaha</b><span id="pkb"></span></div>
+<div class="pkt"><div class="hand" id="pkd"></div><div class="pot">Bote: <b id="pkp">0</b></div><div class="hand" id="pkbd"></div><div class="hand" id="pkh"></div><div class="pk-info" id="pkm"></div></div>
+<div id="pkc"></div></div>
+<div id="adm" hidden><div class="pkbar"><button id="admx">← Salir</button><b>Panel de administrador</b><span></span></div>
+<div class="pkt" style="justify-content:flex-start;padding-top:16px"><div id="admlock"><div class="label">Contraseña de administrador</div><input type="password" id="admpin" autocomplete="off"><button class="go" id="admok">Entrar</button><p class="desc" id="admm"></p></div>
+<div id="admbody" hidden><h3>Wallet ficticia (solo demostración)</h3><div class="ua" style="margin-bottom:12px"><input type="text" id="fakewallet" maxlength="80" placeholder="Escribe un identificador ficticio"><button id="savefakewallet">Guardar</button></div><p class="desc">Este texto es solo una etiqueta de prueba. No es una dirección para recibir dinero y no procesa pagos.</p><h3>Jugadores</h3><div class="ua" style="margin-bottom:10px"><input type="text" id="bcm" maxlength="80" placeholder="Mensaje para todos (felicitación...)"><button id="bcb">Enviar a todos</button></div><div id="admusers"></div><h3>Solicitudes de recarga</h3><div id="admlist"></div><p class="desc">Demo en un solo navegador. Con Supabase, la entrada se protege con login y rol de administrador.</p></div></div></div>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+var bal=20,amt=1,sel=null,busy=false,cur={};
+var U=[],ME=null,kicked=false;
+try{U=JSON.parse(localStorage.getItem('casino-users')||'[]')}catch(e){}
+function saveU(){try{localStorage.setItem('casino-users',JSON.stringify(U))}catch(e){}}
+try{var mid=localStorage.getItem('casino-me');ME=U.filter(function(u){return String(u.id)===mid})[0]||null}catch(e){}
+if(ME&&ME.banned)ME=null;
+if(ME)bal=ME.bal;
+var stage=$('stage');
+function r2(x){return Math.round(x*100)/100}
+function paint(){$('bal').textContent=bal.toFixed(2);$('rec0').hidden=bal>=0.5;if(ME){ME.bal=bal;saveU()}try{localStorage.setItem('casino-bal',String(bal))}catch(e){}}
+function msg(t,c){$('msg').textContent=t;$('msg').className=c||''}
+function rnd(n){return Math.floor(Math.random()*n)}
+function rd(){return 1+rnd(6)}
+function can(){if(amt<0.5){msg('La apuesta mínima es 0.5.','lose');return false}if(bal<amt){msg('No tienes saldo suficiente. Recarga o baja la apuesta.','lose');return false}return true}
+function settle(pay){
+  var p=r2(pay-amt);bal=r2(bal+p);paint();
+  msg(p>0?'¡Ganaste '+p+' puntos!':p===0?'Empate: recuperas tu apuesta.':'Perdiste '+amt+' puntos.',p>0?'win':p<0?'lose':'');
+  if(bal<=0)msg('Te quedaste sin saldo. Recarga para seguir jugando.','lose');
+}
+function chipsHtml(){return '<div class="label">Cantidad</div><div class="row chips">'+[0.5,1,5,10,25].map(function(v){return '<button data-v="'+v+'" aria-pressed="'+(v===amt)+'">'+v+'</button>'}).join('')+'</div>'}
+function optsHtml(label,list){return '<div class="label">'+label+'</div><div class="row">'+list.map(function(p,i){return '<button data-o="'+p[0]+'" aria-pressed="'+(i===0)+'">'+p[1]+'</button>'}).join('')+'</div>'}
+function handleStageClick(e){
+  var b=e.target.closest('button');if(!b)return;
+  if(busy&&(b.dataset.v||b.dataset.o!==undefined)){msg('Espera a que termine la animación.','lose');return}
+  if(b.dataset.v){amt=+b.dataset.v;stage.querySelectorAll('[data-v]').forEach(function(x){x.setAttribute('aria-pressed',x===b)})}
+  else if(b.dataset.o!==undefined){sel=b.dataset.o;stage.querySelectorAll('[data-o]').forEach(function(x){x.setAttribute('aria-pressed',x===b)});if(cur.onsel)cur.onsel(sel)}
+  else if(b.dataset.n!==undefined){if(!busy){$('num').value=b.dataset.n;stage.querySelectorAll('[data-n]').forEach(function(x){x.setAttribute('aria-pressed',x===b)})}}
+  else if(b.id==='go'){if(cur.go)cur.go()}
+  else if(b.dataset.a!==undefined&&cur.act)cur.act(b.dataset.a)
+}
+stage.onclick=handleStageClick;
+/* visual helpers */
+var DI=['?','⚀','⚁','⚂','⚃','⚄','⚅'];
+function die(v){return v?'<div class="die pips p'+v+'">'+new Array(v+1).join('<i></i>')+'</div>':'<div class="die">?</div>'}
+function ball(t,c){return '<div class="ball '+(c||'')+'">'+t+'</div>'}
+var RK=['','A','2','3','4','5','6','7','8','9','10','J','Q','K'],SU=['♠','♥','♦','♣'];
+function rc(){return {r:1+rnd(13),s:rnd(4)}}
+function card(c,hid){if(hid)return '<div class="card back">?</div>';return '<div class="card'+(c.s===1||c.s===2?' r':'')+'"><b>'+RK[c.r]+'</b><em>'+SU[c.s]+'</em></div>'}
+/* generic one-shot game */
+function single(o){return function(){
+  cur={};
+  stage.innerHTML='<div class="show" id="show">'+o.show+'</div>'+(o.opts?optsHtml(o.label,o.opts):'')+(o.extra||'')+chipsHtml()+'<button class="go" id="go">'+o.btn+'</button>';
+  sel=o.opts?String(o.opts[0][0]):null;
+  if(o.onsel)cur.onsel=o.onsel;
+  cur.go=function(){
+    if(busy||!can())return;
+    var er=o.check&&o.check(sel);if(er){msg(er,'lose');return}
+    busy=true;$('go').disabled=true;msg('');
+    var sh=$('show'),t=0;sh.classList.add('spin');
+    var iv=setInterval(function(){o.tick(sh);if(++t>12){
+      clearInterval(iv);sh.classList.remove('spin');
+      settle(o.final(sel,sh));busy=false;$('go').disabled=false;
+    }},110);
+  };
+}}
+function rl(a,s,x){return a.map(function(i){return '<div class="die s '+(x||'')+'">'+s[i]+'</div>'}).join('')}
+var S2=['💎','💰','👑','🍀','🔔','🍒'],P2=[80,40,24,16,12,8],Q3='<div class="die s">❔</div><div class="die s">❔</div><div class="die s">❔</div>',Q5='<div class="die s xs">❔</div><div class="die s xs">❔</div><div class="die s xs">❔</div><div class="die s xs">❔</div><div class="die s xs">❔</div>';
+function shf(a){for(var i=a.length-1;i>0;i--){var j=rnd(i+1),t=a[i];a[i]=a[j];a[j]=t}return a}
+function nbHtml(){var h='';for(var n=0;n<=36;n++)h+='<button data-n="'+n+'" class="'+(n===0?'gg':REDS.indexOf(n)>-1?'rr':'bk')+'" aria-pressed="'+(n===7)+'">'+n+'</button>';return h}
+var COL=[['Rojo','#d0283b',5,2],['Azul','#2b6cd9',3,3.5],['Verde','#1f9d55',2,5.5],['Dorado','#c9a24a',1,11],['Gris','#6b6b6b',1,0]];
+function pc(){var r=rnd(12),a=0;for(var i=0;i<5;i++){a+=COL[i][2];if(r<a)return COL[i]}return COL[4]}
+function cb(c,t){return '<div class="ball cc" style="background:'+c+'">'+t+'</div>'}
+function coin(t){return '<div class="coin">'+t+'</div>'}
+var ICO=['✊','✋','✌️'],CHE=[0,0.5,2];
+function rpsH(a,b){return '<div class="die s">'+ICO[a]+'</div><b>VS</b><div class="die s">'+ICO[b]+'</div>'}
+function openRasca(){
+  cur={};var SY=['💎','💰','⭐','🔔','🍀','🍒','🍋','🍇'],PY=[12,6,3.6,2.4,1.8,1.5,1.2,1.2],G=null,rv=0;
+  stage.innerHTML='<div class="scrg" id="sg"></div><p class="desc" id="si">Compra un boleto y toca cada casilla para rascarla. 3 símbolos iguales ganan.</p>'+chipsHtml()+'<button class="go" id="go">Comprar boleto</button>';
+  function draw(){$('sg').innerHTML=(G||[0,0,0,0,0,0]).map(function(c,i){return G?'<button class="die s scr'+(c.o?' op':'')+'" data-a="'+i+'">'+(c.o?SY[c.s]:'🪙')+'</button>':'<div class="die s scr">🪙</div>'}).join('')}
+  draw();
+  cur.go=function(){if(busy||!can())return;busy=true;$('go').disabled=true;msg('');G=[];for(var i=0;i<6;i++)G.push({s:rnd(8),o:0});rv=0;draw();$('si').textContent='Toca las casillas para rascar.'};
+  cur.act=function(i){if(!G||G[i].o)return;G[i].o=1;rv++;draw();
+    if(rv===6){var c=[0,0,0,0,0,0,0,0],best=-1,k;G.forEach(function(x){c[x.s]++});for(k=0;k<8;k++)if(c[k]>=3&&(best<0||PY[k]>PY[best]))best=k;
+      settle(best<0?0:r2(amt*PY[best]));busy=false;$('go').disabled=false;$('si').textContent=best<0?'Sin 3 iguales. Compra otro boleto.':'¡3 iguales de '+SY[best]+'!'}};
+}
+function openMem(){
+  cur={};var E=['🍒','🍋','🔔','⭐','💎','🍀'],D=null,op=[],done=0,mv=0,lock=false,live=false;
+  stage.innerHTML='<div class="memg" id="mg"></div><p class="desc" id="mi">Encuentra las 6 parejas en 10 movimientos. 8 o menos paga x4, 9 paga x3, 10 paga x2.</p>'+chipsHtml()+'<button class="go" id="go">Empezar</button>';
+  function draw(){$('mg').innerHTML=(D||new Array(12).fill(null)).map(function(c,i){var up=c&&(c.f||c.m);return '<button class="mc'+(up?' up':'')+'" data-a="'+i+'">'+(up?c.e:'?')+'</button>'}).join('')}
+  draw();
+  function end(){live=false;settle(done===6?(mv<=8?amt*4:mv===9?amt*3:amt*2):0);busy=false;$('go').disabled=false}
+  cur.go=function(){if(busy||!can())return;busy=true;$('go').disabled=true;msg('');
+    D=shf(E.concat(E)).map(function(e){return {e:e,f:0,m:0}});op=[];done=0;mv=0;lock=false;live=true;draw();$('mi').textContent='Movimientos: 0 de 10'};
+  cur.act=function(i){if(!live||lock)return;var c=D[i];if(c.f||c.m)return;c.f=1;op.push(i);draw();
+    if(op.length===2){mv++;lock=true;var a=D[op[0]],b=D[op[1]];setTimeout(function(){
+      if(a.e===b.e){a.m=1;b.m=1;done++}
+      a.f=0;b.f=0;op=[];lock=false;draw();$('mi').textContent='Movimientos: '+mv+' de 10';
+      if(done===6||mv>=10)end()},700)}};
+}
+var REDS=[1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
+var MULT=[0,0,0,0,0,0,0.5,1,2,5],SL=['🍒','🍋','🔔','⭐','7️⃣','💎'],SP=[5,8,10,15,25,50];
+function dice(a){return a.map(die).join('')}
+/* Ruleta europea ilustrada: rueda real con orden europeo y bola animada. */
+var WHEEL=[0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26];
+function wheelMarkup(){
+  var labels=WHEEL.map(function(n,i){var a=i*360/37;return '<span class="wn '+(n===0?'wg':REDS.indexOf(n)>-1?'wr':'wb')+'" style="transform:translate(-50%,-50%) rotate('+a+'deg) translateY(-112px) rotate('+(-a)+'deg)">'+n+'</span>'}).join('');
+  return '<div class="wheel-wrap"><div class="wheel-pointer">▼</div><div class="roulette-wheel" id="rouletteWheel"><div class="wheel-labels">'+labels+'</div><div class="wheel-hub">✦</div><div class="wheel-ball" id="wheelBall"></div></div></div>';
+}
+function openAutoRoulette(){
+  cur={};
+  stage.innerHTML='<div class="auto-table"><div class="auto-caption">✦ Vegas Auto Roulette ✦</div>'+wheelMarkup()+'</div><div class="auto-result" id="autoResult">?</div><p class="auto-help" id="autoHelp">Pulsa GIRAR para ver la rueda automática. Es una demostración visual: no hay apuestas, saldo ni premios.</p><button class="go" id="go">Girar la rueda</button>';
+  cur.go=function(){
+    if(busy)return;busy=true;$('go').disabled=true;$('autoHelp').textContent='La bola está girando…';
+    var wheel=$('rouletteWheel'),ballEl=$('wheelBall');
+    wheel.classList.remove('rolling');ballEl.classList.remove('rolling-ball');void wheel.offsetWidth;
+    var result=rnd(37),red=REDS.indexOf(result)>-1,idx=WHEEL.indexOf(result),angle=idx*360/37;
+    wheel.style.setProperty('--stop-angle',(1440+360-angle)+'deg');
+    wheel.classList.add('rolling');ballEl.classList.add('rolling-ball');
+    setTimeout(function(){
+      wheel.classList.remove('rolling');wheel.style.transform='rotate('+(1440+360-angle)+'deg)';
+      ballEl.classList.remove('rolling-ball');ballEl.style.transform='rotate('+(-angle)+'deg) translateY(-105px)';
+      var color=result===0?'green':red?'red':'black',label=result===0?'VERDE':red?'ROJO':'NEGRO';
+      $('autoResult').textContent=result;$('autoResult').className='auto-result '+color;
+      $('autoHelp').textContent='La bola cayó en el '+result+' · '+label+'. ¡Gira otra vez cuando quieras!';
+      busy=false;$('go').disabled=false;
+    },4200);
+  };
+  stage.onclick=function(e){var b=e.target.closest('button');if(b&&b.id==='go')cur.go()};
+}
+
+function openRoulette(){
+  cur={};var selected=7;
+  stage.innerHTML='<div class="roulette-stage">'+wheelMarkup()+'</div><div class="label">Elige tu resultado</div>'+optsHtml('Tipo de resultado',[['red','Rojo'],['black','Negro'],['even','Par'],['odd','Impar'],['num','Número exacto']])+'<div id="nw" hidden><div class="label">Selecciona un número (0–36)</div><input type="hidden" id="num" value="7"><div class="nb">'+nbHtml()+'</div></div>'+chipsHtml()+'<button class="go" id="go">Girar la ruleta</button><p class="desc roulette-note">Ruleta europea: 0 verde, 18 números rojos y 18 negros. Solo puntos virtuales.</p>';
+  sel='red';
+  cur.onsel=function(v){$('nw').hidden=v!=='num'};
+  cur.go=function(){
+    if(busy||!can())return;
+    if(sel==='num'&&!(selected>=0&&selected<=36)){msg('Selecciona un número del 0 al 36.','lose');return}
+    busy=true;$('go').disabled=true;msg('La bola está girando…');
+    var wheel=$('rouletteWheel'),ballEl=$('wheelBall');
+    wheel.classList.remove('rolling');ballEl.classList.remove('rolling-ball');void wheel.offsetWidth;
+    wheel.classList.add('rolling');ballEl.classList.add('rolling-ball');
+    var result=rnd(37),red=REDS.indexOf(result)>-1;
+    var idx=WHEEL.indexOf(result),angle=idx*360/37;
+    wheel.style.setProperty('--stop-angle',(1440+360-angle)+'deg');
+    setTimeout(function(){
+      wheel.classList.remove('rolling');wheel.style.transform='rotate('+ (1440+360-angle)+'deg)';
+      ballEl.classList.remove('rolling-ball');ballEl.style.transform='rotate('+(-angle)+'deg) translateY(-105px)';
+      var color=result===0?'green':red?'red':'black';
+      $('msg').textContent='Resultado: '+result+' · '+(result===0?'VERDE':red?'ROJO':'NEGRO');$('msg').className='';
+      var won=sel==='red'?(red?amt*2:0):sel==='black'?(result&&!red?amt*2:0):sel==='even'?(result!==0&&result%2===0?amt*2:0):sel==='odd'?(result%2===1?amt*2:0):(result===selected?amt*36:0);
+      settle(won);msg('Resultado: '+result+' · '+(result===0?'VERDE':red?'ROJO':'NEGRO')+'. '+(won>0?'¡Punto virtual conseguido!':'Esta ronda no sumó puntos.'),won>0?'win':'lose');
+      busy=false;$('go').disabled=false;
+    },4200);
+  };
+  stage.onclick=function(e){var b=e.target.closest('button');if(!b)return;
+    if(b.dataset.v){amt=+b.dataset.v;stage.querySelectorAll('[data-v]').forEach(function(x){x.setAttribute('aria-pressed',x===b)});return}
+    if(b.dataset.o!==undefined){sel=b.dataset.o;stage.querySelectorAll('[data-o]').forEach(function(x){x.setAttribute('aria-pressed',x===b)});$('nw').hidden=sel!=='num';return}
+    if(b.dataset.n!==undefined){selected=+b.dataset.n;$('num').value=selected;stage.querySelectorAll('[data-n]').forEach(function(x){x.setAttribute('aria-pressed',x===b)});return}
+    if(b.id==='go')cur.go();
+  };
+}
+
+var GAMES={
+d7:{n:'Más o menos 7',d:'Dos dados. Apuesta a la suma.',open:single({
+  show:dice([0,0]),label:'La suma será',opts:[['lo','Menos de 7 (x2)'],['se','Exacto 7 (x5)'],['hi','Más de 7 (x2)']],btn:'Tirar dados',
+  tick:function(sh){sh.innerHTML=dice([rd(),rd()])},
+  final:function(s,sh){var a=rd(),b=rd(),t=a+b;sh.innerHTML=dice([a,b]);return (s==='lo'&&t<7)||(s==='hi'&&t>7)?amt*2:(s==='se'&&t===7)?amt*5:0}})},
+d1:{n:'Dado único',d:'Adivina el número. Paga x5.',open:single({
+  show:dice([0]),label:'Tu número',opts:[[1,'1'],[2,'2'],[3,'3'],[4,'4'],[5,'5'],[6,'6']],btn:'Tirar dado',
+  tick:function(sh){sh.innerHTML=dice([rd()])},
+  final:function(s,sh){var r=rd();sh.innerHTML=dice([r]);return r===+s?amt*5:0}})},
+sic:{n:'Sic Bo',d:'Tres dados. Alto, bajo o triple.',open:single({
+  show:dice([0,0,0]),label:'Apuesta a',opts:[['lo','Bajo 4–10 (x2)'],['hi','Alto 11–17 (x2)'],['tr','Triple (x30)']],btn:'Tirar dados',
+  tick:function(sh){sh.innerHTML=dice([rd(),rd(),rd()])},
+  final:function(s,sh){var a=rd(),b=rd(),c=rd(),t=a+b+c,tr=a===b&&b===c;sh.innerHTML=dice([a,b,c]);
+    return s==='tr'?(tr?amt*30:0):tr?0:(s==='lo'&&t<=10)||(s==='hi'&&t>=11)?amt*2:0}})},
+rul:{n:'Ruleta europea 0–36',d:'La ruleta clásica: rueda numerada, casillas rojas, negras y el cero verde.',open:openRoulette},
+auto:{n:'Vegas Auto Roulette',d:'Rueda automática con bolita y resultado rojo, negro o verde. Demostración visual.',open:openAutoRoulette},
+whe:{n:'Rueda de la fortuna',d:'Gira y gana un multiplicador, de x0 a x5.',open:single({
+  show:ball('x?','green'),btn:'Girar rueda',
+  tick:function(sh){sh.innerHTML=ball('x'+MULT[rnd(10)],'green')},
+  final:function(s,sh){var m=MULT[rnd(10)];sh.innerHTML=ball('x'+m,m>=2?'red':'');return r2(amt*m)}})},
+hl:{n:'Mayor o menor',d:'¿La segunda carta es mayor o menor? Paga x1.9.',open:single({
+  show:card(0,1)+card(0,1),label:'La segunda carta es',opts:[['hi','Mayor'],['lo','Menor']],btn:'Repartir',
+  tick:function(sh){sh.innerHTML=card(rc())+card(rc())},
+  final:function(s,sh){var a=rc(),b=rc();sh.innerHTML=card(a)+card(b);return (s==='hi'&&b.r>a.r)||(s==='lo'&&b.r<a.r)?r2(amt*1.9):0}})},
+slot:{n:'Tragaperras clásica',d:'Tres iguales pagan hasta x50. Dos iguales devuelven tu apuesta.',open:single({
+  show:'<div class="die s">❔</div><div class="die s">❔</div><div class="die s">❔</div>',btn:'Girar',
+  tick:function(sh){sh.innerHTML=[0,0,0].map(function(){return '<div class="die s">'+SL[rnd(6)]+'</div>'}).join('')},
+  final:function(s,sh){var r=[rnd(6),rnd(6),rnd(6)];sh.innerHTML=r.map(function(x){return '<div class="die s">'+SL[x]+'</div>'}).join('');
+    if(r[0]===r[1]&&r[1]===r[2])return amt*SP[r[0]];
+    return (r[0]===r[1]||r[1]===r[2]||r[0]===r[2])?amt:0}})},
+slot2:{n:'Tragaperras Diamantes',d:'Solo pagan tres iguales, pero fuerte: hasta x80.',open:single({
+  show:Q3,btn:'Girar',
+  tick:function(sh){sh.innerHTML=rl([rnd(6),rnd(6),rnd(6)],S2)},
+  final:function(s,sh){var r=[rnd(6),rnd(6),rnd(6)];sh.innerHTML=rl(r,S2);return r[0]===r[1]&&r[1]===r[2]?r2(amt*P2[r[0]]):0}})},
+slot3:{n:'Megaslot 5 rodillos',d:'Cinco rodillos. 3 iguales x2.5, 4 iguales x12, 5 iguales x150.',open:single({
+  show:Q5,btn:'Girar',
+  tick:function(sh){sh.innerHTML=rl([rnd(6),rnd(6),rnd(6),rnd(6),rnd(6)],SL,'xs')},
+  final:function(s,sh){var r=[],c=[0,0,0,0,0,0],i,m=0;for(i=0;i<5;i++){r.push(rnd(6));c[r[i]]++}for(i=0;i<6;i++)if(c[i]>m)m=c[i];
+    sh.innerHTML=rl(r,SL,'xs');return m>=5?amt*150:m===4?amt*12:m===3?r2(amt*2.5):0}})},
+rc:{n:'Ruleta de colores',d:'Elige un color. Cada color paga distinto, hasta x11.',open:single({
+  show:cb('#6b6b6b','?'),label:'Color',opts:[['Rojo','Rojo (x2)'],['Azul','Azul (x3.5)'],['Verde','Verde (x5.5)'],['Dorado','Dorado (x11)']],btn:'Girar',
+  tick:function(sh){var c=pc();sh.innerHTML=cb(c[1],c[0])},
+  final:function(s,sh){var c=pc();sh.innerHTML=cb(c[1],c[0]);return c[0]===s?r2(amt*c[3]):0}})},
+cf:{n:'Cara o cruz',d:'Elige un lado. Paga x1.95.',open:single({
+  show:coin('?'),label:'Tu lado',opts:[['cara','Cara'],['cruz','Cruz']],btn:'Lanzar moneda',
+  tick:function(sh){sh.innerHTML=coin(rnd(2)?'CARA':'CRUZ')},
+  final:function(s,sh){var r=rnd(2)?'cara':'cruz';sh.innerHTML=coin(r.toUpperCase());return r===s?r2(amt*1.95):0}})},
+rps:{n:'Piedra, papel o tijera',d:'Gana x1.9. Si empatan recuperas tu apuesta.',open:single({
+  show:rpsH(1,1),label:'Tu jugada',opts:[[0,'✊ Piedra'],[1,'✋ Papel'],[2,'✌️ Tijera']],btn:'¡Jugar!',
+  tick:function(sh){sh.innerHTML=rpsH(rnd(3),rnd(3))},
+  final:function(s,sh){var p=+s,h=rnd(3);sh.innerHTML=rpsH(p,h);return p===h?amt:(p-h+3)%3===1?r2(amt*1.9):0}})},
+cofre:{n:'Elige el cofre',d:'Abre uno de tres cofres: puede tener x2, x0.5 o nada.',open:single({
+  show:'<div class="die s">🎁</div><div class="die s">🎁</div><div class="die s">🎁</div>',label:'Tu cofre',opts:[[0,'Cofre 1'],[1,'Cofre 2'],[2,'Cofre 3']],btn:'Abrir cofre',
+  tick:function(sh){sh.innerHTML=[0,1,2].map(function(){return '<div class="die s">'+(rnd(2)?'🎁':'✨')+'</div>'}).join('')},
+  final:function(s,sh){var pz=shf(CHE.slice());sh.innerHTML=pz.map(function(m,i){return '<div class="die s" style="font-size:1.5rem;'+(i===+s?'box-shadow:0 0 0 4px var(--brass)':'')+'">x'+m+'</div>'}).join('');return r2(amt*pz[+s])}})},
+rasca:{n:'Rasca y gana',d:'Compra un boleto y rasca 6 casillas. 3 iguales ganan.',open:openRasca},
+mem:{n:'Memoria de cartas',d:'Encuentra las parejas en 10 movimientos y gana hasta x4.',open:openMem},
+reto:{n:'Rueda de retos',d:'Gira para recibir un reto divertido o una pregunta. No requiere apuestas.',open:function(){
+  cur={};var retos=[
+    'Di tres cosas que te hagan reír.',
+    'Imita un animal durante cinco segundos.',
+    'Nombra cinco frutas en diez segundos.',
+    'Inventa un saludo original.',
+    '¿Qué superpoder elegirías y por qué?',
+    'Di una palabra que empiece por cada letra de tu nombre.',
+    'Cuenta un dato curioso que conozcas.',
+    'Haz una pose de campeón durante tres segundos.',
+    '¿Qué lugar te gustaría visitar?',
+    'Nombra tres personajes de videojuegos o anime.',
+    'Inventa un nombre para un equipo.',
+    'Describe tu comida favorita sin decir su nombre.'
+  ];
+  stage.innerHTML='<div class="show" id="retoShow"><div class="ball green">🎡</div></div><p class="desc" id="retoTxt">Gira la rueda y descubre tu reto.</p><button class="go" id="go">Girar la rueda</button>';
+  cur.go=function(){if(busy)return;busy=true;$('go').disabled=true;var sh=$('retoShow'),t=0;sh.classList.add('spin');var iv=setInterval(function(){sh.innerHTML='<div class="ball green">'+['🎡','⭐','❓','🎯'][rnd(4)]+'</div>';if(++t>=14){clearInterval(iv);sh.classList.remove('spin');var r=retos[rnd(retos.length)];$('retoTxt').textContent=r;busy=false;$('go').disabled=false}},100)};
+}},
+pk:{n:'Póker Omaha',d:'Pantalla completa. Recibes 4 cartas, apuestas, subes o te retiras.',full:1,open:openPK},
+bj:{n:'Blackjack',d:'Llega a 21 sin pasarte. Blackjack paga x2.5.',open:openBJ},
+vp:{n:'Video póker',d:'Elige qué cartas conservar. Pareja de J o mejor paga.',open:openVP}
+};
+/* blackjack */
+function tot(h){var s=0,a=0;h.forEach(function(c){var r=c.r>10?10:c.r===1?11:c.r;s+=r;if(c.r===1)a++});while(s>21&&a-->0)s-=10;return s}
+function openBJ(){
+  cur={};var P,D,live=false;
+  stage.innerHTML='<div class="label">Casa</div><div class="hand" id="dh"></div><div class="label">Tú</div><div class="hand" id="ph"></div><div class="row" id="acts" hidden><button data-a="hit">Pedir carta</button><button data-a="stand">Plantarse</button></div>'+chipsHtml()+'<button class="go" id="go">Repartir</button>';
+  function draw(hide){
+    $('dh').innerHTML=D?D.map(function(c,i){return card(c,hide&&i===1)}).join('')+(hide?'':' <b>'+tot(D)+'</b>'):'';
+    $('ph').innerHTML=P?P.map(function(c){return card(c)}).join('')+' <b>'+tot(P)+'</b>':'';
+  }
+  function fin(){
+    while(tot(D)<17)D.push(rc());
+    draw(false);live=false;$('acts').hidden=true;
+    var p=tot(P),d=tot(D),bjk=P.length===2&&p===21,pay=0;
+    if(p>21)pay=0;else if(bjk&&!(D.length===2&&d===21))pay=r2(amt*2.5);
+    else if(d>21||p>d)pay=amt*2;else if(p===d)pay=amt;
+    settle(pay);busy=false;$('go').disabled=false;
+  }
+  cur.go=function(){
+    if(busy||!can())return;busy=true;$('go').disabled=true;msg('');
+    P=[rc(),rc()];D=[rc(),rc()];live=true;draw(true);
+    if(tot(P)===21){fin();return}
+    $('acts').hidden=false;
+  };
+  cur.act=function(a){
+    if(!live)return;
+    if(a==='hit'){P.push(rc());draw(true);if(tot(P)>=21)fin()}else fin();
+  };
+}
+/* video poker */
+function evalHand(h){
+  var r=h.map(function(c){return c.r}).sort(function(a,b){return a-b}),fl=h.every(function(c){return c.s===h[0].s}),cnt={};
+  r.forEach(function(x){cnt[x]=(cnt[x]||0)+1});
+  var v=Object.keys(cnt).map(function(k){return cnt[k]}).sort(function(a,b){return b-a});
+  var st=new Set(r).size===5&&(r[4]-r[0]===4||r.join()==='1,10,11,12,13');
+  if(st&&fl)return r[0]===1&&r[1]===10?[250,'Escalera real']:[50,'Escalera de color'];
+  if(v[0]===4)return [25,'Póker'];if(v[0]===3&&v[1]===2)return [9,'Full'];if(fl)return [6,'Color'];if(st)return [4,'Escalera'];
+  if(v[0]===3)return [3,'Trío'];if(v[0]===2&&v[1]===2)return [2,'Doble par'];
+  if(v[0]===2){for(var k in cnt)if(cnt[k]===2&&(+k>=11||+k===1))return [1,'Pareja alta']}
+  return [0,'Sin premio'];
+}
+function openVP(){
+  cur={};var H=null,hold=[],deck=[],phase=0;
+  stage.innerHTML='<div class="hand" id="vh">'+[0,1,2,3,4].map(function(){return card(0,1)}).join('')+'</div><p class="desc" id="vt">Reparte y toca las cartas que quieras conservar.</p>'+chipsHtml()+'<button class="go" id="go">Repartir</button>';
+  function draw(){
+    $('vh').innerHTML=H.map(function(c,i){return '<button class="card'+(c.s===1||c.s===2?' r':'')+(hold[i]?' hold':'')+'" data-a="'+i+'"><b>'+RK[c.r]+'</b><em>'+SU[c.s]+'</em></button>'}).join('');
+  }
+  function newDeck(){deck=[];for(var s=0;s<4;s++)for(var r=1;r<=13;r++)deck.push({r:r,s:s});for(var i=51;i>0;i--){var j=rnd(i+1),t=deck[i];deck[i]=deck[j];deck[j]=t}}
+  cur.go=function(){
+    if(!phase){
+      if(!can())return;msg('');newDeck();H=deck.splice(0,5);hold=[0,0,0,0,0];phase=1;busy=true;draw();
+      $('go').textContent='Cambiar cartas';$('vt').textContent='Toca las cartas que quieras conservar.';
+    }else{
+      for(var i=0;i<5;i++)if(!hold[i])H[i]=deck.pop();
+      hold=[0,0,0,0,0];draw();phase=0;
+      var e=evalHand(H);$('vt').textContent='Resultado: '+e[1];
+      settle(amt*e[0]);busy=false;$('go').textContent='Repartir';
+    }
+  };
+  cur.act=function(i){if(phase!==1)return;hold[i]=hold[i]?0:1;draw()};
+}
+/* wallet */
+var HI=[];try{HI=JSON.parse(localStorage.getItem('casino-hist')||'[]')}catch(e){}
+var WA='WALLET-DEMO-0000';try{WA=localStorage.getItem('casino-demo-label')||WA}catch(e){}
+$('waddr').textContent=WA;
+function drawH(){$('wh').innerHTML=HI.length?HI.map(function(x){return '<div>'+x+'</div>'}).join(''):'Sin movimientos todavía.'}
+function hist(t){HI.unshift(t);HI=HI.slice(0,4);try{localStorage.setItem('casino-hist',JSON.stringify(HI))}catch(e){}drawH()}
+drawH();
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function hello(){$('wname').textContent=ME?', '+ME.name:''}
+function drawBell(){var n=ME?(ME.msgs||[]).filter(function(m){return !m.r}).length:0;$('bell').hidden=!ME;$('bn').textContent=n;$('bell').className='bellb'+(n?' new':'')}
+function sendMsg(u,t){u.msgs=u.msgs||[];u.msgs.unshift({t:t,r:0,d:Date.now()});u.msgs=u.msgs.slice(0,20);saveU();drawBell()}
+function credit(id,v){var u=U.filter(function(x){return x.id===id})[0];if(!u)return;
+  if(ME&&ME.id===id){bal=r2(bal+v);paint();hist('Acreditado +'+v+' puntos')}else{u.bal=r2(u.bal+v);saveU()}
+  sendMsg(u,'El administrador te acreditó '+v+' puntos.')}
+function drawUsers(){var l=$('admusers');
+  l.innerHTML=U.length?U.map(function(u){return '<div class="rq u"><div><b>'+esc(u.name)+'</b> '+(u.banned?'<small class="lose">expulsado</small>':'')+'<br><small>'+u.bal.toFixed(2)+' puntos</small></div><div class="ua"><input type="number" step="0.5" min="0.5" placeholder="puntos" id="c'+u.id+'"><button data-u="'+u.id+'" data-d="cred">+ Créditos</button><input type="text" maxlength="80" placeholder="Mensaje" id="m'+u.id+'"><button data-u="'+u.id+'" data-d="msg">Enviar</button><button data-u="'+u.id+'" data-d="ban">'+(u.banned?'Reactivar':'Expulsar')+'</button></div></div>'}).join(''):'Aún no hay jugadores registrados.'}
+$('admusers').onclick=function(e){var b=e.target.closest('[data-u]');if(!b)return;
+  var u=U.filter(function(x){return String(x.id)===b.dataset.u})[0];if(!u)return;var d=b.dataset.d;
+  if(d==='cred'){var v=r2(+$('c'+u.id).value);if(!(v>0))return;credit(u.id,v)}
+  if(d==='msg'){var t=$('m'+u.id).value.trim();if(!t)return;sendMsg(u,t)}
+  if(d==='ban'){u.banned=!u.banned;if(u.banned&&ME&&ME.id===u.id)kicked=true;saveU()}
+  drawUsers()};
+$('savefakewallet').onclick=function(){var v=$('fakewallet').value.trim();if(!v){$('admm').textContent='Escribe una etiqueta ficticia.';return}WA=v;$('waddr').textContent=WA;try{localStorage.setItem('casino-demo-label',WA)}catch(e){}$('admm').textContent='Etiqueta ficticia guardada.'};
+$('bcb').onclick=function(){var t=$('bcm').value.trim();if(!t)return;U.forEach(function(u){if(!u.banned)sendMsg(u,t)});$('bcm').value='';$('bcb').textContent='Enviado ✓';setTimeout(function(){$('bcb').textContent='Enviar a todos'},1500)};
+function openReg(t){$('reg').hidden=false;$('regm').textContent=t||'';$('regname').value=''}
+$('regok').onclick=function(){
+  var n=$('regname').value.trim();
+  if(n.length<2){$('regm').textContent='Escribe un nombre de al menos 2 letras.';return}
+  var u=U.filter(function(x){return x.name.toLowerCase()===n.toLowerCase()})[0];
+  if(u&&u.banned){$('regm').textContent='Esta cuenta fue expulsada por el administrador.';return}
+  if(!u){u={id:Date.now(),name:n,bal:20,banned:false,msgs:[]};U.push(u);sendMsg(u,'¡Bienvenido, '+n+'! Te damos 20 puntos de prueba para empezar.')}
+  ME=u;try{localStorage.setItem('casino-me',String(u.id))}catch(e){}
+  bal=ME.bal;paint();hello();drawBell();$('reg').hidden=true;showTab('home')};
+$('swp').onclick=function(){if(busy)return;ME=null;try{localStorage.removeItem('casino-me')}catch(e){}hello();drawBell();openReg()};
+$('bell').onclick=function(){if(!ME)return;$('inbody').innerHTML=(ME.msgs||[]).length?ME.msgs.map(function(m){return '<div class="msgc'+(m.r?'':' un')+'">'+esc(m.t)+'<br><small>'+new Date(m.d).toLocaleString()+'</small></div>'}).join(''):'No tienes mensajes.';$('inbox').hidden=false};
+$('inx').onclick=function(){if(ME){(ME.msgs||[]).forEach(function(m){m.r=1});saveU();drawBell()}$('inbox').hidden=true};
+hello();drawBell();
+var CA='TEST-CASINO-0000';
+var RQ=[];try{RQ=JSON.parse(localStorage.getItem('casino-reqs')||'[]')}catch(e){}
+function saveRQ(){try{localStorage.setItem('casino-reqs',JSON.stringify(RQ))}catch(e){}}
+function drawAdm(){drawUsers();$('fakewallet').value=WA;var l=$('admlist');l.innerHTML=RQ.length?RQ.map(function(q){return '<div class="rq"><span>'+esc(q.u||'?')+': '+q.amt+' puntos<br><small>'+q.st+'</small></span>'+(q.st==='pendiente'?'<span class="row"><button data-q="'+q.id+'" data-d="ok">Aceptar</button><button data-q="'+q.id+'" data-d="no">Rechazar</button></span>':'')+'</div>'}).join(''):'No hay solicitudes.'}
+function addReq(v){RQ.unshift({id:Date.now(),amt:v,st:'pendiente',uid:ME?ME.id:0,u:ME?ME.name:'?'});RQ=RQ.slice(0,20);saveRQ();hist('Solicitud +'+v+' puntos (pendiente)');drawAdm()}
+$('adm0').onclick=function(){if(busy)return;$('adm').hidden=false;$('admlock').hidden=false;$('admbody').hidden=true;$('admpin').value='';$('admm').textContent=''};
+$('admx').onclick=function(){$('adm').hidden=true;if(kicked){kicked=false;ME=null;try{localStorage.removeItem('casino-me')}catch(e){}hello();drawBell();openReg('Fuiste expulsado por el administrador.')}};
+$('admok').onclick=function(){if($('admpin').value==='ZgRMhpYR'){$('admlock').hidden=true;$('admbody').hidden=false;drawAdm()}else $('admm').textContent='Contraseña incorrecta.'};
+$('admlist').onclick=function(e){var b=e.target.closest('[data-q]');if(!b)return;var q=RQ.filter(function(x){return String(x.id)===b.dataset.q})[0];if(!q||q.st!=='pendiente')return;
+  if(b.dataset.d==='ok'){q.st='aceptada';credit(q.uid,q.amt)}else{q.st='rechazada';var uu=U.filter(function(x){return x.id===q.uid})[0];if(uu)sendMsg(uu,'Tu solicitud de '+q.amt+' puntos fue rechazada.')}
+  saveRQ();drawAdm()};
+var wmode_=null;
+function wmsg(t){$('wm').textContent=t}
+function wopen(m){if(busy)return;wmode_=m;$('wp').hidden=false;$('wl').textContent=m==='dep'?'Reiniciar puntos (mínimo 1)':'Canje desactivado (mínimo 5)';$('wad').hidden=m==='dep';$('wa').value=m==='dep'?1:5;wmsg(m==='dep'?'Modo demostración: no envíes dinero ni compartas una wallet real. La solicitud solo registra puntos virtuales.':'Simulado: no hay pagos reales conectados.')}
+$('dep').onclick=function(){wopen('dep')};$('rec0').onclick=function(){if(busy)return;showTab('home');wopen('dep');$('wp').scrollIntoView({behavior:'smooth',block:'center'})};$('wd').onclick=function(){wopen('wd')};
+$('wok').onclick=function(){var v=r2(+$('wa').value);
+  if(wmode_==='dep'){if(!(v>=1)){wmsg('El mínimo para recargar es 1.');return}addReq(v);wmsg('Solicitud de '+v+' puntos enviada. El administrador debe aceptarla para acreditarla.')}
+  else{if(!(v>=5)){wmsg('El mínimo para retirar es 5.');return}if(v>bal){wmsg('No tienes tanto saldo.');return}var ad=$('wad').value.trim();if(!ad){wmsg('Escribe una dirección de destino de prueba.');return}if(/^T[1-9A-HJ-NP-Za-km-z]{33}$/.test(ad)||/^0x[0-9a-fA-F]{40}$/.test(ad)){wmsg('Eso parece una dirección real. No la uses: esto es solo una simulación.');return}bal=r2(bal-v);paint();hist('Retiro -'+v+' puntos a '+ad.slice(0,14));wmsg('Retiro de '+v+' puntos registrado (simulado).')}};
+/* poker omaha */
+function e5(h){var r=h.map(function(c){return c.r===1?14:c.r}).sort(function(a,b){return b-a}),fl=h.every(function(c){return c.s===h[0].s}),cn={};
+  r.forEach(function(x){cn[x]=(cn[x]||0)+1});
+  var g=Object.keys(cn).map(function(k){return [cn[k],+k]}).sort(function(a,b){return b[0]-a[0]||b[1]-a[1]});
+  var wh=r.join()==='14,5,4,3,2',st=g.length===5&&(r[0]-r[4]===4||wh);
+  var c=st&&fl?8:g[0][0]===4?7:g[0][0]===3&&g[1][0]===2?6:fl?5:st?4:g[0][0]===3?3:g[0][0]===2&&g[1][0]===2?2:g[0][0]===2?1:0;
+  var tb=st?[wh?5:r[0]]:g.map(function(x){return x[1]});while(tb.length<5)tb.push(0);
+  var s=c;tb.forEach(function(x){s=s*15+x});return s}
+function best(hl,bd){var b=-1,i,j,a,c,d,s;
+  for(i=0;i<4;i++)for(j=i+1;j<4;j++)for(a=0;a<bd.length;a++)for(c=a+1;c<bd.length;c++)for(d=c+1;d<bd.length;d++){s=e5([hl[i],hl[j],bd[a],bd[c],bd[d]]);if(s>b)b=s}return b}
+var CN=['Carta alta','Pareja','Doble par','Trío','Escalera','Color','Full','Póker','Escalera de color'];
+function cat(s){return Math.floor(s/759375)}
+function pre(h){var r=h.map(function(c){return c.r===1?14:c.r}).sort(function(a,b){return a-b}),cn={},sc={},p=0,su=0,cx=0,i,k;
+  r.forEach(function(x){cn[x]=(cn[x]||0)+1});for(k in cn)if(cn[k]>=2)p++;
+  h.forEach(function(c){sc[c.s]=(sc[c.s]||0)+1});for(k in sc)if(sc[k]>=2)su++;
+  for(i=1;i<4;i++)if(r[i]-r[i-1]<=2)cx++;
+  return .15+.2*p+(r[3]===14?.12:0)+.08*su+.05*cx+rnd(20)/100-.05}
+function shuf(){var d=[],s,r,i,j,t;for(s=0;s<4;s++)for(r=1;r<=13;r++)d.push({r:r,s:s});for(i=51;i>0;i--){j=rnd(i+1);t=d[i];d[i]=d[j];d[j]=t}return d}
+function openPK(){
+  var pk=$('pk'),P=null,D=null,B=null,deck,pot=0,rd_=0,facing=0,hand=false,A=1,note='';
+  var RN=['Antes del flop','Flop','Turn','River'];
+  pk.hidden=false;
+  function say(t){$('pkm').textContent=t}
+  function render(show){
+    $('pkb').textContent='Saldo: '+bal.toFixed(2);$('pkp').textContent=pot.toFixed(2);
+    $('pkd').innerHTML=(D||[0,0,0,0]).map(function(c){return card(c,!show)}).join('');
+    $('pkh').innerHTML=P?P.map(function(c){return card(c)}).join(''):'';
+    var h='';for(var i=0;i<5;i++)h+=B&&B[i]?card(B[i]):'<div class="card ph">·</div>';$('pkbd').innerHTML=h;
+  }
+  function idle(){hand=false;$('pkc').innerHTML=chipsHtml()+'<p class="desc">La apuesta inicial se fija al repartir. Durante la mano puedes subir esa misma cantidad.</p><button class="go" id="pkgo">Repartir</button>'}
+  function ask(){var c=facing>0;
+    $('pkc').innerHTML='<div class="row"><button data-a="fold">Canje desactivadose</button><button data-a="'+(c?'call':'check')+'"'+(c&&bal<facing?' disabled':'')+'>'+(c?'Igualar '+facing:'Pasar')+'</button>'+(c?'':'<button data-a="raise"'+(bal<A?' disabled':'')+'>Subir '+A+'</button>')+'</div>';
+    say((note?note+' ':'')+RN[rd_]+': tu turno.')}
+  function end(t,txt){hand=false;if(t==='w')bal=r2(bal+pot);if(t==='t')bal=r2(bal+pot/2);paint();render(true);
+    say(txt+(t==='w'?' Ganas '+pot.toFixed(2)+'.':t==='t'?' Empate: se divide el bote.':' Pierdes lo apostado.')+(bal<0.5?' Recarga para seguir.':''));idle()}
+  function str(){return rd_===0?pre(D):Math.min(1,cat(best(D,B))/4+rnd(15)/100-.07)}
+  function next(){rd_++;facing=0;
+    if(rd_>3){var p=best(P,B),d=best(D,B);end(p>d?'w':p<d?'l':'t','Tú: '+CN[cat(p)]+'. Casa: '+CN[cat(d)]+'.');return}
+    if(rd_===1)B=deck.splice(0,3);else B.push(deck.pop());
+    render();ask()}
+  function act(a){
+    if(!hand)return;
+    if(a==='fold'){end('l','Te retiraste.');return}
+    if(a==='call'){bal=r2(bal-facing);pot=r2(pot+facing);paint();note='Igualaste.';next();return}
+    if(a==='check'){if(str()>.45){facing=A;pot=r2(pot+A);note='La casa apuesta '+A+'.';render();ask()}else{note='La casa pasa.';next()}return}
+    if(a==='raise'){bal=r2(bal-A);pot=r2(pot+A);paint();
+      if(str()>.22){pot=r2(pot+A);note='Subiste y la casa igualó.';next()}else end('w','La casa se retiró.')}
+  }
+  function deal(){
+    if(amt<0.5||bal<amt){say('No tienes saldo suficiente. Recarga o baja la apuesta (mínimo 0.5).');return}
+    A=amt;bal=r2(bal-A);pot=r2(A*2);paint();deck=shuf();P=deck.splice(0,4);D=deck.splice(0,4);B=[];rd_=0;facing=0;hand=true;note='';
+    render();ask()}
+  pk.onclick=function(e){var b=e.target.closest('button');if(!b)return;
+    if(b.id==='pkx'){if(hand){say('Termina la mano o retírate antes de salir.');return}pk.hidden=true;return}
+    if(b.dataset.v){if(hand)return;amt=+b.dataset.v;pk.querySelectorAll('[data-v]').forEach(function(x){x.setAttribute('aria-pressed',x===b)});return}
+    if(b.id==='pkgo'){deal();return}
+    if(b.dataset.a)act(b.dataset.a)};
+  idle();render();say('Omaha contra la casa: recibes 4 cartas y usas exactamente 2 de tu mano y 3 de la mesa.');
+}
+/* lobby */
+var CATS=[['🎲','Dados',['d7','d1','sic']],['🎡','Ruletas',['rul','auto','rc','whe']],['🃏','Póker y cartas',['pk','vp','bj','hl']],['🎰','Tragaperras',['slot','slot2','slot3']],['🎁','Más juegos',['cf','rps','cofre','rasca','mem','reto']]];
+$('lobby').innerHTML=CATS.map(function(c){
+  return '<div class="cat" data-c="'+c[1]+'" hidden><h3>'+c[0]+' '+c[1]+'</h3><div class="tiles">'+c[2].map(function(id){return '<button class="tile" data-g="'+id+'"><b>'+GAMES[id].n+'</b><span>'+GAMES[id].d+'</span></button>'}).join('')+'</div></div>';
+}).join('');
+function showTab(k){
+  $('game').hidden=true;cur={};
+  $('home').hidden=k!=='home';$('lobby').hidden=k==='home';
+  document.querySelectorAll('.cat').forEach(function(x){x.hidden=x.dataset.c!==k});
+  document.querySelectorAll('#nav button').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.t===k)});
+}
+$('nav').innerHTML='<button data-t="home" aria-pressed="true">🏠 Inicio</button>'+CATS.map(function(c){return '<button data-t="'+c[1]+'" aria-pressed="false">'+c[0]+' '+c[1]+'</button>'}).join('');
+$('nav').onclick=function(e){var b=e.target.closest('[data-t]');if(!b||busy)return;showTab(b.dataset.t)};
+$('home').appendChild($('wcard'));$('home').appendChild($('wp'));
+showTab('home');
+$('lobby').onclick=function(e){
+  var b=e.target.closest('[data-g]');if(!b)return;
+  var g=GAMES[b.dataset.g];stage.onclick=handleStageClick;if(g.full){busy=false;g.open();return}$('gtitle').textContent=g.n;$('gdesc').textContent=g.d;
+  $('lobby').hidden=true;$('game').hidden=false;msg('');busy=false;g.open();window.scrollTo(0,0);
+};
+$('back').onclick=function(){if(busy)return;cur={};$('game').hidden=true;$('lobby').hidden=false};
+$('reset').onclick=function(){if(busy)return;bal=20;paint();msg('Saldo reiniciado.')};
+/* entrada */
+$('enter').onclick=function(){
+  var g=$('gate');g.classList.add('open');setTimeout(function(){g.hidden=true},1900);if(!ME)openReg();
+};
+paint();
+})();
+</script>
+</body>
+</html>
