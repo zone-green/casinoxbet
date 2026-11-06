@@ -205,9 +205,9 @@ section.panel{border-radius:16px;border:1px solid rgba(226,189,99,.5);background
 <main>
 <header class="hdr"><div class="crown">👑</div><div class="ttl"><span class="sd">✦</span><h1 class="big">CASINO</h1><span class="sd">✦</span></div><div class="suits"><i>♠</i><i class="rd">♥</i><i>♣</i><i class="rd">♦</i></div></header>
 <p class="sub">Puntos virtuales de práctica · sin dinero real ni premios canjeables.</p>
-<div class="bank" id="bank"><div><b id="bal">20.00</b> <small>puntos</small></div><button id="rec0" hidden>Reiniciar puntos</button></div>
-<section class="panel" id="wcard"><div class="wtop"><b>Puntos virtuales (demo)</b><span class="tag">PRUEBA</span></div><div class="addr">Identificador de demostración: <code id="waddr">WALLET-DEMO-0000</code></div><div class="row"><button id="dep">Reiniciar puntos</button><button id="wd">Canje desactivado</button></div><div class="wh" id="wh"></div></section>
-<section class="panel" id="wp" hidden><div class="label" id="wl"></div><input type="number" id="wa" step="0.5" min="0"><input type="text" id="wad" placeholder="Dirección de destino (de prueba)" autocomplete="off"><button class="go" id="wok">Confirmar</button><p class="desc" id="wm">Simulado: no hay pagos reales conectados.</p></section>
+<div class="bank" id="bank"><div><b id="bal">0.00</b> <small>puntos virtuales</small></div><div class="row"><button id="rec0">Depositar</button></div></div>
+<section class="panel" id="wcard"><div class="wtop"><b>Puntos virtuales (demo)</b><span class="tag">PRUEBA</span></div><div class="addr">Identificador de demostración: <code id="waddr">WALLET-DEMO-0000</code></div><div class="row"><button id="dep">Depositar</button></div><div class="wh" id="wh"></div></section>
+<section class="panel" id="wp" hidden><div class="label" id="wl"></div><div class="label" style="font-size:1.1rem;color:#e7c56b">USDT (BEP 20)</div><div class="addr" style="margin:10px 0"><code id="depwalletvalue">WALLET-DEMO-0000</code></div><input type="number" id="wa" step="0.5" min="0"><button class="go" id="wok">Enviar solicitud de puntos</button><p class="desc" id="wm">Simulado: no hay pagos reales conectados.</p></section>
 <div class="bulbs"></div>
 
 <nav class="nav" id="nav"></nav>
@@ -220,7 +220,7 @@ section.panel{border-radius:16px;border:1px solid rgba(226,189,99,.5);background
 <section class="panel"><div id="stage"></div><div id="msg" role="status" aria-live="polite"></div></section>
 </div>
 
-<p class="foot">Simulación: el puntos es de prueba, no tiene valor y no se puede retirar de verdad.<br><button id="reset">Reiniciar a 20 puntos</button> <button id="adm0">Administrador</button> <button id="swp">Cambiar jugador</button></p>
+<p class="foot">Simulación: el puntos es de prueba, no tiene valor y no se puede retirar de verdad.<br><button id="adm0">Administrador</button> <button id="swp">Cambiar jugador</button></p>
 </main>
 <button id="bell" class="bellb" hidden>🔔 <b id="bn">0</b></button>
 <div id="reg" hidden><div class="regbox"><h2>Regístrate</h2><p class="desc">Escribe tu nombre para jugar. Si ya te registraste, escribe el mismo nombre para entrar.</p><input type="text" id="regname" maxlength="20" placeholder="Tu nombre" autocomplete="off"><button class="go" id="regok">Entrar a jugar</button><p class="desc" id="regm"></p></div></div>
@@ -234,13 +234,15 @@ section.panel{border-radius:16px;border:1px solid rgba(226,189,99,.5);background
 <script>
 (function(){
 var $=function(i){return document.getElementById(i)};
-var bal=20,amt=1,sel=null,busy=false,cur={};
+var bal=0,amt=1,sel=null,busy=false,cur={};
 var U=[],ME=null,kicked=false;
 try{U=JSON.parse(localStorage.getItem('casino-users')||'[]')}catch(e){}
 function saveU(){try{localStorage.setItem('casino-users',JSON.stringify(U))}catch(e){}}
 try{var mid=localStorage.getItem('casino-me');ME=U.filter(function(u){return String(u.id)===mid})[0]||null}catch(e){}
 if(ME&&ME.banned)ME=null;
-if(ME)bal=ME.bal;
+/* Migración única: elimina el saldo inicial gratuito anterior y deja a todos en cero. */
+try{if(localStorage.getItem('casino-zero-start-v1')!=='1'){U.forEach(function(u){u.bal=0});localStorage.setItem('casino-zero-start-v1','1');localStorage.setItem('casino-users',JSON.stringify(U));}}catch(e){}
+if(ME)bal=Number(ME.bal)||0;
 var stage=$('stage');
 function r2(x){return Math.round(x*100)/100}
 function paint(){$('bal').textContent=bal.toFixed(2);$('rec0').hidden=bal>=0.5;if(ME){ME.bal=bal;saveU()}try{localStorage.setItem('casino-bal',String(bal))}catch(e){}}
@@ -556,7 +558,7 @@ $('regok').onclick=function(){
   if(n.length<2){$('regm').textContent='Escribe un nombre de al menos 2 letras.';return}
   var u=U.filter(function(x){return x.name.toLowerCase()===n.toLowerCase()})[0];
   if(u&&u.banned){$('regm').textContent='Esta cuenta fue expulsada por el administrador.';return}
-  if(!u){u={id:Date.now(),name:n,bal:20,banned:false,msgs:[]};U.push(u);sendMsg(u,'¡Bienvenido, '+n+'! Te damos 20 puntos de prueba para empezar.')}
+  if(!u){u={id:Date.now(),name:n,bal:0,banned:false,msgs:[]};U.push(u);sendMsg(u,'¡Bienvenido, '+n+'! Tu saldo inicial es de 0 puntos virtuales.')}
   ME=u;try{localStorage.setItem('casino-me',String(u.id))}catch(e){}
   bal=ME.bal;paint();hello();drawBell();$('reg').hidden=true;showTab('home')};
 $('swp').onclick=function(){if(busy)return;ME=null;try{localStorage.removeItem('casino-me')}catch(e){}hello();drawBell();openReg()};
@@ -576,11 +578,9 @@ $('admlist').onclick=function(e){var b=e.target.closest('[data-q]');if(!b)return
   saveRQ();drawAdm()};
 var wmode_=null;
 function wmsg(t){$('wm').textContent=t}
-function wopen(m){if(busy)return;wmode_=m;$('wp').hidden=false;$('wl').textContent=m==='dep'?'Reiniciar puntos (mínimo 1)':'Canje desactivado (mínimo 5)';$('wad').hidden=m==='dep';$('wa').value=m==='dep'?1:5;wmsg(m==='dep'?'Modo demostración: no envíes dinero ni compartas una wallet real. La solicitud solo registra puntos virtuales.':'Simulado: no hay pagos reales conectados.')}
-$('dep').onclick=function(){wopen('dep')};$('rec0').onclick=function(){if(busy)return;showTab('home');wopen('dep');$('wp').scrollIntoView({behavior:'smooth',block:'center'})};$('wd').onclick=function(){wopen('wd')};
-$('wok').onclick=function(){var v=r2(+$('wa').value);
-  if(wmode_==='dep'){if(!(v>=1)){wmsg('El mínimo para recargar es 1.');return}addReq(v);wmsg('Solicitud de '+v+' puntos enviada. El administrador debe aceptarla para acreditarla.')}
-  else{if(!(v>=5)){wmsg('El mínimo para retirar es 5.');return}if(v>bal){wmsg('No tienes tanto saldo.');return}var ad=$('wad').value.trim();if(!ad){wmsg('Escribe una dirección de destino de prueba.');return}if(/^T[1-9A-HJ-NP-Za-km-z]{33}$/.test(ad)||/^0x[0-9a-fA-F]{40}$/.test(ad)){wmsg('Eso parece una dirección real. No la uses: esto es solo una simulación.');return}bal=r2(bal-v);paint();hist('Retiro -'+v+' puntos a '+ad.slice(0,14));wmsg('Retiro de '+v+' puntos registrado (simulado).')}};
+function wopen(m){if(busy)return;wmode_=m;$('wp').hidden=false;$('wl').textContent='Solicitud de depósito de puntos virtuales (demo)';$('depwalletvalue').textContent=WA;$('wa').value=1;wmsg('USDT (BEP 20) · Wallet ficticia. No envíes dinero: no se reciben pagos reales. La solicitud queda pendiente hasta que el administrador decida si acredita puntos.')}
+$('dep').onclick=function(){wopen('dep')};$('rec0').onclick=function(){if(busy)return;showTab('home');wopen('dep');$('wp').scrollIntoView({behavior:'smooth',block:'center'})};
+$('wok').onclick=function(){var v=r2(+$('wa').value);if(!(v>=1)){wmsg('Indica una cantidad válida de puntos virtuales.');return}addReq(v);wmsg('Solicitud registrada. El administrador revisará y, si corresponde, acreditará los puntos. USDT (BEP20) · DEMO: no envíes dinero; no se procesa ningún pago.');};
 /* poker omaha */
 function e5(h){var r=h.map(function(c){return c.r===1?14:c.r}).sort(function(a,b){return b-a}),fl=h.every(function(c){return c.s===h[0].s}),cn={};
   r.forEach(function(x){cn[x]=(cn[x]||0)+1});
@@ -661,7 +661,7 @@ $('lobby').onclick=function(e){
   $('lobby').hidden=true;$('game').hidden=false;msg('');busy=false;g.open();window.scrollTo(0,0);
 };
 $('back').onclick=function(){if(busy)return;cur={};$('game').hidden=true;$('lobby').hidden=false};
-$('reset').onclick=function(){if(busy)return;bal=20;paint();msg('Saldo reiniciado.')};
+
 /* entrada */
 $('enter').onclick=function(){
   var g=$('gate');g.classList.add('open');setTimeout(function(){g.hidden=true},1900);if(!ME)openReg();
