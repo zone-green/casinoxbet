@@ -206,11 +206,11 @@ section.panel{border-radius:16px;border:1px solid rgba(226,189,99,.5);background
 <header class="hdr"><div class="crown">👑</div><div class="ttl"><span class="sd">✦</span><h1 class="big">CASINO</h1><span class="sd">✦</span></div><div class="suits"><i>♠</i><i class="rd">♥</i><i>♣</i><i class="rd">♦</i></div></header>
 <p class="sub">Juega con USDT · recargas y retiros por la red BEP20.</p>
 <div class="bank" id="bank"><div><b id="bal">0.00</b> <small>USDT</small></div><div class="row"><button id="rec0">Recargar</button><button id="ret0">Retirar</button></div></div>
-<section class="panel" id="wp" hidden><div class="wtop"><b>Recargar saldo</b><span class="tag">USDT · BEP20</span></div><p class="desc">Envía USDT por la red BEP20 (BNB Smart Chain) a esta dirección. Si usas otra red, pierdes el dinero. Después escribe la cantidad que enviaste y toca Enviar solicitud.</p><div class="addr" style="margin:10px 0"><code id="depwalletvalue">0xd40E216613764E3F7f1D7fa486a326BF30C3eaE4</code></div><label class="label" for="wa">Cantidad solicitada (USDT)</label><input type="number" id="wa" step="0.01" min="0.01" placeholder="Ej. 5.00"><button class="go" id="wok">Enviar solicitud</button><p class="desc" id="wm">El administrador acreditará tu saldo cuando confirme el pago.</p></section><section class="panel" id="wd" hidden><div class="wtop"><b>Retirar saldo</b><span class="tag">USDT · BEP20</span></div><label class="label" for="wdaddr">Agrega tu dirección de billetera</label><input type="text" id="wdaddr" maxlength="42" placeholder="0x..." autocomplete="off" autocapitalize="off" spellcheck="false"><p class="desc"><b>USDT BEP20</b> (red BNB Smart Chain). Revisa bien la dirección: los envíos no se pueden revertir.</p><label class="label" for="wdamt">Cantidad (USDT)</label><input type="number" id="wdamt" step="0.01" min="1" placeholder="Mínimo 1.00"><button class="go" id="wdsend">Enviar código al correo</button><div id="wdc" hidden><label class="label" for="wdcode">Código recibido en tu correo</label><input type="text" id="wdcode" inputmode="numeric" maxlength="10" autocomplete="one-time-code"><button class="go" id="wdok">Confirmar retiro</button></div><p class="desc" id="wdm"></p></section>
+<section class="panel" id="wp" hidden><div class="wtop"><b>Recargar saldo</b><span class="tag">USDT · BEP20</span></div><p class="desc">Envía USDT por la red BEP20 (BNB Smart Chain) a esta dirección. Si usas otra red, pierdes el dinero. Después escribe la cantidad que enviaste y toca Enviar solicitud.</p><div class="addr" style="margin:10px 0"><code id="depwalletvalue">0xd40E216613764E3F7f1D7fa486a326BF30C3eaE4</code></div><label class="label" for="wa">Cantidad solicitada (USDT)</label><input type="number" id="wa" step="0.01" min="0.01" placeholder="Ej. 5.00"><button class="go" id="wok">Enviar solicitud</button><p class="desc" id="wm">El administrador acreditará tu saldo cuando confirme el pago.</p></section><section class="panel" id="wd" hidden><div class="wtop"><b>Retirar saldo</b><span class="tag">USDT · BEP20</span></div><label class="label" for="wdaddr">Agrega tu dirección de billetera</label><input type="text" id="wdaddr" maxlength="42" placeholder="0x..." autocomplete="off" autocapitalize="off" spellcheck="false"><p class="desc"><b>USDT BEP20</b> (red BNB Smart Chain). Revisa bien la dirección: los envíos no se pueden revertir.</p><label class="label" for="wdamt">Cantidad (USDT)</label><input type="number" id="wdamt" step="0.01" min="1" placeholder="Mínimo 1.00"><button class="go" id="wdsend">Enviar a revisión</button><p class="desc" id="wdm">Tu saldo se descuenta al enviar y se te devuelve si el retiro es rechazado.</p></section>
 <div class="bulbs"></div>
 
 <nav class="nav" id="nav"></nav>
-<div id="home"><section class="panel welcome"><h2>¡Bienvenido al Casino<span id="wname"></span>!<img id="wav" alt="" hidden style="width:40px;height:40px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-left:8px"></h2><p class="desc">Elige una categoría arriba para ver todos sus juegos. Juegas con saldo en USDT. Puedes recargar y retirar cuando quieras.</p><ul class="rules"><li>Recargas y retiros en USDT por la red BEP20.</li><li>Los retiros se confirman con un código enviado a tu correo y los revisa el administrador antes de enviarse a tu billetera.</li><li>Retiro mínimo: 1 USDT.</li><li>Solo para mayores de 18 años. Apuesta únicamente lo que puedas perder.</li></ul></section></div>
+<div id="home"><section class="panel welcome"><h2>¡Bienvenido al Casino<span id="wname"></span>!<img id="wav" alt="" hidden style="width:40px;height:40px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-left:8px"></h2><p class="desc">Elige una categoría arriba para ver todos sus juegos. Juegas con saldo en USDT. Puedes recargar y retirar cuando quieras.</p><ul class="rules"><li>Recargas y retiros en USDT por la red BEP20.</li><li>Los retiros los revisa el administrador antes de enviarse a tu billetera.</li><li>Retiro mínimo: 1 USDT.</li><li>Solo para mayores de 18 años. Apuesta únicamente lo que puedas perder.</li></ul></section></div>
 <div id="lobby"></div>
 
 <div id="game" hidden>
@@ -617,28 +617,20 @@ $('rec0').onclick=function(){if(busy)return;if(!ME){openReg('Inicia sesión para
 $('wok').onclick=async function(){if(!ME){wmsg('Inicia sesión primero.');return}var v=r2(+$('wa').value);if(!(v>0)){wmsg('Indica una cantidad válida de USDT.');return}
   $('wok').disabled=true;var r=await sb.rpc('request_recarga',{p_amt:v});$('wok').disabled=false;
   if(r.error){wmsg(r.error.message);return}hist('Solicitud de '+v.toFixed(2)+' USDT (pendiente)');wmsg('Solicitud enviada al administrador. Tu saldo se acreditará cuando confirme el pago.')};
-$('ret0').onclick=function(){if(busy)return;if(!ME){openReg('Inicia sesión para retirar.');return}showTab('home');$('wd').hidden=false;$('wdc').hidden=true;$('wdcode').value='';$('wdm').textContent='';$('wd').scrollIntoView({behavior:'smooth',block:'center'})};
+$('ret0').onclick=function(){if(busy)return;if(!ME){openReg('Inicia sesión para retirar.');return}showTab('home');$('wd').hidden=false;$('wdm').textContent='Tu saldo se descuenta al enviar y se te devuelve si el retiro es rechazado.';$('wd').scrollIntoView({behavior:'smooth',block:'center'})};
 function wdRead(){var a=$('wdaddr').value.trim(),v=r2(+$('wdamt').value),e='';
   if(!/^0x[0-9a-fA-F]{40}$/.test(a))e='La dirección BEP20 no es válida (empieza con 0x y tiene 42 caracteres).';
   else if(!(v>=1))e='El retiro mínimo es 1 USDT.';
-  else if(v>bal)e='No tienes saldo suficiente.';
+  else if(v>bal)e='Saldo insuficiente.';
   return {a:a,v:v,e:e}}
 $('wdsend').onclick=async function(){var w=wdRead();if(w.e){$('wdm').textContent=w.e;return}
-  $('wdsend').disabled=true;
-  try{var r=await sb.auth.signInWithOtp({email:ME.email,options:{shouldCreateUser:false}});if(r.error)throw r.error;
-    $('wdc').hidden=false;$('wdm').textContent='Te enviamos un código a '+ME.email+'. Escríbelo abajo.'}
-  catch(e){$('wdm').textContent=trErr(e)}
-  $('wdsend').disabled=false};
-$('wdok').onclick=async function(){var w=wdRead(),c=$('wdcode').value.trim();if(w.e){$('wdm').textContent=w.e;return}
-  if(!/^\d{6,10}$/.test(c)){$('wdm').textContent='Escribe el código que llegó a tu correo.';return}
-  $('wdok').disabled=true;
+  $('wdsend').disabled=true;$('wdsend').textContent='Enviando…';
   try{await Q;
-    var r=await sb.auth.verifyOtp({email:ME.email,token:c,type:'email'});if(r.error)throw r.error;
     var x=await sb.rpc('request_withdraw',{p_amt:w.v,p_addr:w.a});if(x.error)throw x.error;
-    hist('Retiro de '+w.v.toFixed(2)+' USDT (pendiente)');await loadMe(true);
-    $('wdc').hidden=true;$('wdaddr').value='';$('wdamt').value='';$('wdm').textContent='Solicitud de retiro enviada. El administrador la revisará y enviará tus USDT.';
+    hist('Retiro de '+w.v.toFixed(2)+' USDT (en revisión)');await loadMe(true);
+    $('wdaddr').value='';$('wdamt').value='';$('wdm').textContent='✓ Enviado a revisión. El administrador lo revisará y te enviará los USDT a tu billetera.';
   }catch(e){$('wdm').textContent=trErr(e)}
-  $('wdok').disabled=false};
+  $('wdsend').disabled=false;$('wdsend').textContent='Enviar a revisión'};
 /* mi perfil */
 var PLACE='data:image/svg+xml;utf8,'+encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96'><rect width='96' height='96' fill='#3a3a3a'/><circle cx='48' cy='38' r='17' fill='#888'/><ellipse cx='48' cy='86' rx='30' ry='24' fill='#888'/></svg>");
 function setAv(u){var a=u&&u.avatar;$('wav').hidden=!a;if(a)$('wav').src=a;$('pav').src=a||PLACE}
@@ -723,7 +715,7 @@ function openPK(){
   }
   function idle(){hand=false;$('pkc').innerHTML=chipsHtml()+'<p class="desc">La apuesta inicial se fija al repartir. Durante la mano puedes subir esa misma cantidad.</p><button class="go" id="pkgo">Repartir</button>'}
   function ask(){var c=facing>0;
-    $('pkc').innerHTML='<div class="row"><button data-a="fold">Canje desactivadose</button><button data-a="'+(c?'call':'check')+'"'+(c&&bal<facing?' disabled':'')+'>'+(c?'Igualar '+facing:'Pasar')+'</button>'+(c?'':'<button data-a="raise"'+(bal<A?' disabled':'')+'>Subir '+A+'</button>')+'</div>';
+    $('pkc').innerHTML='<div class="row"><button data-a="fold">Retirarse</button><button data-a="'+(c?'call':'check')+'"'+(c&&bal<facing?' disabled':'')+'>'+(c?'Igualar '+facing:'Pasar')+'</button>'+(c?'':'<button data-a="raise"'+(bal<A?' disabled':'')+'>Subir '+A+'</button>')+'</div>';
     say((note?note+' ':'')+RN[rd_]+': tu turno.')}
   function end(t,txt){hand=false;if(t==='w')bal=r2(bal+pot);if(t==='t')bal=r2(bal+pot/2);paint();render(true);
     say(txt+(t==='w'?' Ganas '+pot.toFixed(2)+'.':t==='t'?' Empate: se divide el bote.':' Pierdes lo apostado.')+(bal<0.5?' Recarga para seguir.':''));idle()}
