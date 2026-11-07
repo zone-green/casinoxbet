@@ -50,7 +50,7 @@ button.card.hold{border-color:var(--brass);box-shadow:0 0 0 2px var(--brass);tra
 @keyframes shake{50%{transform:rotate(5deg) scale(1.03)}}
 .go{width:100%;margin-top:14px;background:var(--brass);color:var(--ink);font-weight:600;font-size:1.05rem}
 .go:disabled{opacity:.5}
-input[type=number],input[type=text]{width:100%;font:inherit;min-height:44px;padding:8px 10px;border-radius:6px;border:1px solid var(--brass);background:var(--ink);color:var(--ivory)}
+input[type=number],input[type=text],input[type=email],input[type=password]{width:100%;font:inherit;min-height:44px;padding:8px 10px;border-radius:6px;border:1px solid var(--brass);background:var(--ink);color:var(--ivory)}
 #msg{min-height:3em;margin-top:12px;font-weight:600}
 .win{color:#9be3b5}.lose{color:#f0a0a8}
 .foot{font-size:.8rem;color:#b9c9bf;margin-top:20px;line-height:1.5}
@@ -204,14 +204,13 @@ section.panel{border-radius:16px;border:1px solid rgba(226,189,99,.5);background
 </div>
 <main>
 <header class="hdr"><div class="crown">👑</div><div class="ttl"><span class="sd">✦</span><h1 class="big">CASINO</h1><span class="sd">✦</span></div><div class="suits"><i>♠</i><i class="rd">♥</i><i>♣</i><i class="rd">♦</i></div></header>
-<p class="sub">Puntos virtuales de práctica · sin dinero real ni premios canjeables.</p>
-<div class="bank" id="bank"><div><b id="bal">0.00</b> <small>puntos virtuales</small></div><div class="row"><button id="rec0">Depositar</button></div></div>
-<section class="panel" id="wcard"><div class="wtop"><b>Puntos virtuales (demo)</b><span class="tag">PRUEBA</span></div><div class="addr">Identificador de demostración: <code id="waddr">WALLET-DEMO-0000</code></div><div class="row"><button id="dep">Depositar</button></div><div class="wh" id="wh"></div></section>
-<section class="panel" id="wp" hidden><div class="label" id="wl"></div><div class="label" style="font-size:1.1rem;color:#e7c56b">USDT (BEP 20)</div><div class="addr" style="margin:10px 0"><code id="depwalletvalue">WALLET-DEMO-0000</code></div><input type="number" id="wa" step="0.5" min="0"><button class="go" id="wok">Enviar solicitud de puntos</button><p class="desc" id="wm">Simulado: no hay pagos reales conectados.</p></section>
+<p class="sub">Créditos USDT simulados · sin dinero real ni premios canjeables.</p>
+<div class="bank" id="bank"><div><b id="bal">0.00</b> <small>USDT</small></div><div class="row"><button id="rec0">Recargar</button></div></div>
+<section class="panel" id="wp" hidden><div class="wtop"><b>Recargar saldo</b><span class="tag">USDT · BEP20</span></div><p class="desc">Dirección ficticia de muestra. No envíes fondos.</p><div class="addr" style="margin:10px 0"><code id="depwalletvalue">0xd40E216613764E3F7f1D7fa486a326BF30C3eaE4</code></div><label class="label" for="wa">Cantidad solicitada (USDT)</label><input type="number" id="wa" step="0.01" min="0.01" placeholder="Ej. 5.00"><button class="go" id="wok">Enviar solicitud</button><p class="desc" id="wm">La solicitud es simulada: no verifica transferencias ni recibe pagos.</p></section>
 <div class="bulbs"></div>
 
 <nav class="nav" id="nav"></nav>
-<div id="home"><section class="panel welcome"><h2>¡Bienvenido al Casino<span id="wname"></span>!</h2><p class="desc">Elige una categoría arriba para ver todos sus juegos. Juegas únicamente con puntos virtuales sin valor real.</p><ul class="rules"><li>Los puntos son solo de demostración.</li><li>No hay depósitos ni retiros reales.</li><li>No se pueden comprar ni canjear puntos.</li><li>Juega por diversión y practica.</li></ul></section></div>
+<div id="home"><section class="panel welcome"><h2>¡Bienvenido al Casino<span id="wname"></span>!</h2><p class="desc">Elige una categoría arriba para ver todos sus juegos. Juegas con créditos USDT simulados, sin valor real.</p><ul class="rules"><li>Los créditos USDT son solo simulados.</li><li>No hay depósitos ni retiros reales.</li><li>No se pueden comprar ni canjear puntos.</li><li>Juega por diversión y practica.</li></ul></section></div>
 <div id="lobby"></div>
 
 <div id="game" hidden>
@@ -220,17 +219,17 @@ section.panel{border-radius:16px;border:1px solid rgba(226,189,99,.5);background
 <section class="panel"><div id="stage"></div><div id="msg" role="status" aria-live="polite"></div></section>
 </div>
 
-<p class="foot">Simulación: el puntos es de prueba, no tiene valor y no se puede retirar de verdad.<br><button id="adm0">Administrador</button> <button id="swp">Cambiar jugador</button></p>
+<p class="foot">Simulación: los USDT mostrados no tienen valor y no se pueden retirar.<br><button id="adm0">Administrador</button> <button id="swp">Cambiar jugador</button></p>
 </main>
 <button id="bell" class="bellb" hidden>🔔 <b id="bn">0</b></button>
-<div id="reg" hidden><div class="regbox"><h2>Regístrate</h2><p class="desc">Escribe tu nombre para jugar. Si ya te registraste, escribe el mismo nombre para entrar.</p><input type="text" id="regname" maxlength="20" placeholder="Tu nombre" autocomplete="off"><button class="go" id="regok">Entrar a jugar</button><p class="desc" id="regm"></p></div></div>
+<div id="reg" hidden><div class="regbox"><h2>Crear cuenta / Iniciar sesión</h2><p class="desc">Introduce tu nombre, correo y contraseña. Usa los mismos datos cada vez que vuelvas.</p><label class="label" for="regname">Nombre</label><input type="text" id="regname" maxlength="30" placeholder="Tu nombre" autocomplete="name"><label class="label" for="regemail">Correo electrónico</label><input type="email" id="regemail" maxlength="120" placeholder="correo@ejemplo.com" autocomplete="email"><label class="label" for="regpass">Contraseña</label><input type="password" id="regpass" maxlength="100" placeholder="Mínimo 8 caracteres" autocomplete="current-password"><button class="go" id="regok">Continuar</button><p class="desc">Esta versión guarda las cuentas solo en este navegador; no es un sistema de cuentas en servidor.</p><p class="desc" id="regm"></p></div></div>
 <div id="inbox" hidden><div class="regbox"><h2>Mensajes</h2><div id="inbody"></div><button class="go" id="inx">Cerrar</button></div></div>
 <div id="pk" hidden><div class="pkbar"><button id="pkx">← Salir</button><b>Póker Omaha</b><span id="pkb"></span></div>
 <div class="pkt"><div class="hand" id="pkd"></div><div class="pot">Bote: <b id="pkp">0</b></div><div class="hand" id="pkbd"></div><div class="hand" id="pkh"></div><div class="pk-info" id="pkm"></div></div>
 <div id="pkc"></div></div>
 <div id="adm" hidden><div class="pkbar"><button id="admx">← Salir</button><b>Panel de administrador</b><span></span></div>
 <div class="pkt" style="justify-content:flex-start;padding-top:16px"><div id="admlock"><div class="label">Contraseña de administrador</div><input type="password" id="admpin" autocomplete="off"><button class="go" id="admok">Entrar</button><p class="desc" id="admm"></p></div>
-<div id="admbody" hidden><h3>Wallet ficticia (solo demostración)</h3><div class="ua" style="margin-bottom:12px"><input type="text" id="fakewallet" maxlength="80" placeholder="Escribe un identificador ficticio"><button id="savefakewallet">Guardar</button></div><p class="desc">Este texto es solo una etiqueta de prueba. No es una dirección para recibir dinero y no procesa pagos.</p><h3>Jugadores</h3><div class="ua" style="margin-bottom:10px"><input type="text" id="bcm" maxlength="80" placeholder="Mensaje para todos (felicitación...)"><button id="bcb">Enviar a todos</button></div><div id="admusers"></div><h3>Solicitudes de recarga</h3><div id="admlist"></div><p class="desc">Demo en un solo navegador. Con Supabase, la entrada se protege con login y rol de administrador.</p></div></div></div>
+<div id="admbody" hidden><h3>Jugadores</h3><div class="ua" style="margin-bottom:10px"><input type="text" id="bcm" maxlength="80" placeholder="Mensaje para todos (felicitación...)"><button id="bcb">Enviar a todos</button></div><div id="admusers"></div><h3>Solicitudes de recarga</h3><div id="admlist"></div><p class="desc">Demo en un solo navegador. Con Supabase, la entrada se protege con login y rol de administrador.</p></div></div></div>
 <script>
 (function(){
 var $=function(i){return document.getElementById(i)};
@@ -238,21 +237,21 @@ var bal=0,amt=1,sel=null,busy=false,cur={};
 var U=[],ME=null,kicked=false;
 try{U=JSON.parse(localStorage.getItem('casino-users')||'[]')}catch(e){}
 function saveU(){try{localStorage.setItem('casino-users',JSON.stringify(U))}catch(e){}}
-try{var mid=localStorage.getItem('casino-me');ME=U.filter(function(u){return String(u.id)===mid})[0]||null}catch(e){}
-if(ME&&ME.banned)ME=null;
+/* Se solicita iniciar sesión cada vez que se abre la página. */
+ME=null;try{localStorage.removeItem('casino-me')}catch(e){}
 /* Migración única: elimina el saldo inicial gratuito anterior y deja a todos en cero. */
 try{if(localStorage.getItem('casino-zero-start-v1')!=='1'){U.forEach(function(u){u.bal=0});localStorage.setItem('casino-zero-start-v1','1');localStorage.setItem('casino-users',JSON.stringify(U));}}catch(e){}
 if(ME)bal=Number(ME.bal)||0;
 var stage=$('stage');
 function r2(x){return Math.round(x*100)/100}
-function paint(){$('bal').textContent=bal.toFixed(2);$('rec0').hidden=bal>=0.5;if(ME){ME.bal=bal;saveU()}try{localStorage.setItem('casino-bal',String(bal))}catch(e){}}
+function paint(){$('bal').textContent=bal.toFixed(2);if(ME){ME.bal=bal;saveU()}try{localStorage.setItem('casino-bal',String(bal))}catch(e){}}
 function msg(t,c){$('msg').textContent=t;$('msg').className=c||''}
 function rnd(n){return Math.floor(Math.random()*n)}
 function rd(){return 1+rnd(6)}
 function can(){if(amt<0.5){msg('La apuesta mínima es 0.5.','lose');return false}if(bal<amt){msg('No tienes saldo suficiente. Recarga o baja la apuesta.','lose');return false}return true}
 function settle(pay){
   var p=r2(pay-amt);bal=r2(bal+p);paint();
-  msg(p>0?'¡Ganaste '+p+' puntos!':p===0?'Empate: recuperas tu apuesta.':'Perdiste '+amt+' puntos.',p>0?'win':p<0?'lose':'');
+  msg(p>0?'¡Ganaste '+p+' USDT!':p===0?'Empate: recuperas tu apuesta.':'Perdiste '+amt+' USDT.',p>0?'win':p<0?'lose':'');
   if(bal<=0)msg('Te quedaste sin saldo. Recarga para seguir jugando.','lose');
 }
 function chipsHtml(){return '<div class="label">Cantidad</div><div class="row chips">'+[0.5,1,5,10,25].map(function(v){return '<button data-v="'+v+'" aria-pressed="'+(v===amt)+'">'+v+'</button>'}).join('')+'</div>'}
@@ -358,7 +357,7 @@ function openAutoRoulette(){
 
 function openRoulette(){
   cur={};var selected=7;
-  stage.innerHTML='<div class="roulette-stage">'+wheelMarkup()+'</div><div class="label">Elige tu resultado</div>'+optsHtml('Tipo de resultado',[['red','Rojo'],['black','Negro'],['even','Par'],['odd','Impar'],['num','Número exacto']])+'<div id="nw" hidden><div class="label">Selecciona un número (0–36)</div><input type="hidden" id="num" value="7"><div class="nb">'+nbHtml()+'</div></div>'+chipsHtml()+'<button class="go" id="go">Girar la ruleta</button><p class="desc roulette-note">Ruleta europea: 0 verde, 18 números rojos y 18 negros. Solo puntos virtuales.</p>';
+  stage.innerHTML='<div class="roulette-stage">'+wheelMarkup()+'</div><div class="label">Elige tu resultado</div>'+optsHtml('Tipo de resultado',[['red','Rojo'],['black','Negro'],['even','Par'],['odd','Impar'],['num','Número exacto']])+'<div id="nw" hidden><div class="label">Selecciona un número (0–36)</div><input type="hidden" id="num" value="7"><div class="nb">'+nbHtml()+'</div></div>'+chipsHtml()+'<button class="go" id="go">Girar la ruleta</button><p class="desc roulette-note">Ruleta europea: 0 verde, 18 números rojos y 18 negros. Solo créditos USDT simulados.</p>';
   sel='red';
   cur.onsel=function(v){$('nw').hidden=v!=='num'};
   cur.go=function(){
@@ -377,7 +376,7 @@ function openRoulette(){
       var color=result===0?'green':red?'red':'black';
       $('msg').textContent='Resultado: '+result+' · '+(result===0?'VERDE':red?'ROJO':'NEGRO');$('msg').className='';
       var won=sel==='red'?(red?amt*2:0):sel==='black'?(result&&!red?amt*2:0):sel==='even'?(result!==0&&result%2===0?amt*2:0):sel==='odd'?(result%2===1?amt*2:0):(result===selected?amt*36:0);
-      settle(won);msg('Resultado: '+result+' · '+(result===0?'VERDE':red?'ROJO':'NEGRO')+'. '+(won>0?'¡Punto virtual conseguido!':'Esta ronda no sumó puntos.'),won>0?'win':'lose');
+      settle(won);msg('Resultado: '+result+' · '+(result===0?'VERDE':red?'ROJO':'NEGRO')+'. '+(won>0?'¡Punto virtual conseguido!':'Esta ronda no sumó USDT.'),won>0?'win':'lose');
       busy=false;$('go').disabled=false;
     },4200);
   };
@@ -528,39 +527,46 @@ function openVP(){
   };
   cur.act=function(i){if(phase!==1)return;hold[i]=hold[i]?0:1;draw()};
 }
-/* wallet */
+/* Registro local de movimientos de créditos simulados */
 var HI=[];try{HI=JSON.parse(localStorage.getItem('casino-hist')||'[]')}catch(e){}
-var WA='WALLET-DEMO-0000';try{WA=localStorage.getItem('casino-demo-label')||WA}catch(e){}
-$('waddr').textContent=WA;
-function drawH(){$('wh').innerHTML=HI.length?HI.map(function(x){return '<div>'+x+'</div>'}).join(''):'Sin movimientos todavía.'}
-function hist(t){HI.unshift(t);HI=HI.slice(0,4);try{localStorage.setItem('casino-hist',JSON.stringify(HI))}catch(e){}drawH()}
-drawH();
+function hist(t){HI.unshift(t);HI=HI.slice(0,4);try{localStorage.setItem('casino-hist',JSON.stringify(HI))}catch(e){}}
 function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function hello(){$('wname').textContent=ME?', '+ME.name:''}
 function drawBell(){var n=ME?(ME.msgs||[]).filter(function(m){return !m.r}).length:0;$('bell').hidden=!ME;$('bn').textContent=n;$('bell').className='bellb'+(n?' new':'')}
 function sendMsg(u,t){u.msgs=u.msgs||[];u.msgs.unshift({t:t,r:0,d:Date.now()});u.msgs=u.msgs.slice(0,20);saveU();drawBell()}
 function credit(id,v){var u=U.filter(function(x){return x.id===id})[0];if(!u)return;
-  if(ME&&ME.id===id){bal=r2(bal+v);paint();hist('Acreditado +'+v+' puntos')}else{u.bal=r2(u.bal+v);saveU()}
-  sendMsg(u,'El administrador te acreditó '+v+' puntos.')}
+  if(ME&&ME.id===id){bal=r2(bal+v);paint();hist('Acreditado +'+v+' USDT')}else{u.bal=r2(u.bal+v);saveU()}
+  sendMsg(u,'El administrador acreditó '+v+' USDT simulados en tu saldo.')}
 function drawUsers(){var l=$('admusers');
-  l.innerHTML=U.length?U.map(function(u){return '<div class="rq u"><div><b>'+esc(u.name)+'</b> '+(u.banned?'<small class="lose">expulsado</small>':'')+'<br><small>'+u.bal.toFixed(2)+' puntos</small></div><div class="ua"><input type="number" step="0.5" min="0.5" placeholder="puntos" id="c'+u.id+'"><button data-u="'+u.id+'" data-d="cred">+ Créditos</button><input type="text" maxlength="80" placeholder="Mensaje" id="m'+u.id+'"><button data-u="'+u.id+'" data-d="msg">Enviar</button><button data-u="'+u.id+'" data-d="ban">'+(u.banned?'Reactivar':'Expulsar')+'</button></div></div>'}).join(''):'Aún no hay jugadores registrados.'}
+  l.innerHTML=U.length?U.map(function(u){return '<div class="rq u"><div><b>'+esc(u.name)+'</b> '+(u.banned?'<small class="lose">suspendido</small>':'')+'<br><small>'+esc(u.email||'sin correo')+' · '+Number(u.bal||0).toFixed(2)+' USDT</small></div><div class="ua"><input type="number" step="0.5" min="0.5" placeholder="USDT" id="c'+u.id+'"><button data-u="'+u.id+'" data-d="cred">+ Créditos</button><input type="text" maxlength="80" placeholder="Mensaje" id="m'+u.id+'"><button data-u="'+u.id+'" data-d="msg">Enviar</button><button data-u="'+u.id+'" data-d="ban">'+(u.banned?'Reactivar':'Expulsar')+'</button></div></div>'}).join(''):'Aún no hay jugadores registrados.'}
 $('admusers').onclick=function(e){var b=e.target.closest('[data-u]');if(!b)return;
   var u=U.filter(function(x){return String(x.id)===b.dataset.u})[0];if(!u)return;var d=b.dataset.d;
   if(d==='cred'){var v=r2(+$('c'+u.id).value);if(!(v>0))return;credit(u.id,v)}
   if(d==='msg'){var t=$('m'+u.id).value.trim();if(!t)return;sendMsg(u,t)}
   if(d==='ban'){u.banned=!u.banned;if(u.banned&&ME&&ME.id===u.id)kicked=true;saveU()}
   drawUsers()};
-$('savefakewallet').onclick=function(){var v=$('fakewallet').value.trim();if(!v){$('admm').textContent='Escribe una etiqueta ficticia.';return}WA=v;$('waddr').textContent=WA;try{localStorage.setItem('casino-demo-label',WA)}catch(e){}$('admm').textContent='Etiqueta ficticia guardada.'};
 $('bcb').onclick=function(){var t=$('bcm').value.trim();if(!t)return;U.forEach(function(u){if(!u.banned)sendMsg(u,t)});$('bcm').value='';$('bcb').textContent='Enviado ✓';setTimeout(function(){$('bcb').textContent='Enviar a todos'},1500)};
-function openReg(t){$('reg').hidden=false;$('regm').textContent=t||'';$('regname').value=''}
-$('regok').onclick=function(){
-  var n=$('regname').value.trim();
+function openReg(t){$('reg').hidden=false;$('regm').textContent=t||'';$('regname').value='';$('regemail').value='';$('regpass').value=''}
+async function passHash(p){if(!window.crypto||!crypto.subtle)throw new Error('Abre la página mediante HTTPS para crear la cuenta.');var b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')}
+$('regok').onclick=async function(){
+  var n=$('regname').value.trim(),email=$('regemail').value.trim().toLowerCase(),pass=$('regpass').value;
   if(n.length<2){$('regm').textContent='Escribe un nombre de al menos 2 letras.';return}
-  var u=U.filter(function(x){return x.name.toLowerCase()===n.toLowerCase()})[0];
-  if(u&&u.banned){$('regm').textContent='Esta cuenta fue expulsada por el administrador.';return}
-  if(!u){u={id:Date.now(),name:n,bal:0,banned:false,msgs:[]};U.push(u);sendMsg(u,'¡Bienvenido, '+n+'! Tu saldo inicial es de 0 puntos virtuales.')}
-  ME=u;try{localStorage.setItem('casino-me',String(u.id))}catch(e){}
-  bal=ME.bal;paint();hello();drawBell();$('reg').hidden=true;showTab('home')};
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){$('regm').textContent='Escribe un correo electrónico válido.';return}
+  if(pass.length<8){$('regm').textContent='La contraseña debe tener al menos 8 caracteres.';return}
+  $('regok').disabled=true;
+  try{
+    var hash=await passHash(pass),u=U.filter(function(x){return (x.email||'').toLowerCase()===email})[0];
+    if(u){if(u.banned){$('regm').textContent='Esta cuenta fue suspendida por el administrador.';return}if(u.name.toLowerCase()!==n.toLowerCase()||u.passHash!==hash){$('regm').textContent='Los datos no coinciden con esta cuenta.';return}}
+    else{
+      var old=U.filter(function(x){return !x.email&&x.name.toLowerCase()===n.toLowerCase()})[0];
+      if(old){u=old;u.email=email;u.passHash=hash;}
+      else{u={id:Date.now(),name:n,email:email,passHash:hash,bal:0,banned:false,msgs:[]};U.push(u);sendMsg(u,'¡Bienvenido, '+n+'! Tu saldo inicial es de 0.00 USDT simulados.')}
+    }
+    u.email=email;u.passHash=hash;saveU();ME=u;try{localStorage.setItem('casino-me',String(u.id))}catch(e){}
+    bal=Number(ME.bal)||0;paint();hello();drawBell();$('reg').hidden=true;showTab('home');
+  }catch(err){$('regm').textContent=err.message||'No se pudo validar la cuenta.'}
+  finally{$('regok').disabled=false}
+};
 $('swp').onclick=function(){if(busy)return;ME=null;try{localStorage.removeItem('casino-me')}catch(e){}hello();drawBell();openReg()};
 $('bell').onclick=function(){if(!ME)return;$('inbody').innerHTML=(ME.msgs||[]).length?ME.msgs.map(function(m){return '<div class="msgc'+(m.r?'':' un')+'">'+esc(m.t)+'<br><small>'+new Date(m.d).toLocaleString()+'</small></div>'}).join(''):'No tienes mensajes.';$('inbox').hidden=false};
 $('inx').onclick=function(){if(ME){(ME.msgs||[]).forEach(function(m){m.r=1});saveU();drawBell()}$('inbox').hidden=true};
@@ -568,19 +574,18 @@ hello();drawBell();
 var CA='TEST-CASINO-0000';
 var RQ=[];try{RQ=JSON.parse(localStorage.getItem('casino-reqs')||'[]')}catch(e){}
 function saveRQ(){try{localStorage.setItem('casino-reqs',JSON.stringify(RQ))}catch(e){}}
-function drawAdm(){drawUsers();$('fakewallet').value=WA;var l=$('admlist');l.innerHTML=RQ.length?RQ.map(function(q){return '<div class="rq"><span>'+esc(q.u||'?')+': '+q.amt+' puntos<br><small>'+q.st+'</small></span>'+(q.st==='pendiente'?'<span class="row"><button data-q="'+q.id+'" data-d="ok">Aceptar</button><button data-q="'+q.id+'" data-d="no">Rechazar</button></span>':'')+'</div>'}).join(''):'No hay solicitudes.'}
-function addReq(v){RQ.unshift({id:Date.now(),amt:v,st:'pendiente',uid:ME?ME.id:0,u:ME?ME.name:'?'});RQ=RQ.slice(0,20);saveRQ();hist('Solicitud +'+v+' puntos (pendiente)');drawAdm()}
+function drawAdm(){drawUsers();var l=$('admlist');l.innerHTML=RQ.length?RQ.map(function(q){return '<div class="rq"><span><b>'+esc(q.u||'?')+'</b><br><small>'+esc(q.email||'')+' · '+Number(q.amt).toFixed(2)+' USDT</small><br><small>Estado: '+esc(q.st)+'</small></span>'+(q.st==='pendiente'?'<span class="row"><button data-q="'+q.id+'" data-d="ok">Aceptar</button><button data-q="'+q.id+'" data-d="no">Rechazar</button></span>':'')+'</div>'}).join(''):'No hay solicitudes.'}
+function addReq(v){RQ.unshift({id:Date.now(),amt:v,st:'pendiente',uid:ME?ME.id:0,u:ME?ME.name:'?',email:ME?ME.email:''});RQ=RQ.slice(0,50);saveRQ();hist('Solicitud de '+v.toFixed(2)+' USDT (pendiente)');drawAdm()}
 $('adm0').onclick=function(){if(busy)return;$('adm').hidden=false;$('admlock').hidden=false;$('admbody').hidden=true;$('admpin').value='';$('admm').textContent=''};
 $('admx').onclick=function(){$('adm').hidden=true;if(kicked){kicked=false;ME=null;try{localStorage.removeItem('casino-me')}catch(e){}hello();drawBell();openReg('Fuiste expulsado por el administrador.')}};
 $('admok').onclick=function(){if($('admpin').value==='ZgRMhpYR'){$('admlock').hidden=true;$('admbody').hidden=false;drawAdm()}else $('admm').textContent='Contraseña incorrecta.'};
 $('admlist').onclick=function(e){var b=e.target.closest('[data-q]');if(!b)return;var q=RQ.filter(function(x){return String(x.id)===b.dataset.q})[0];if(!q||q.st!=='pendiente')return;
-  if(b.dataset.d==='ok'){q.st='aceptada';credit(q.uid,q.amt)}else{q.st='rechazada';var uu=U.filter(function(x){return x.id===q.uid})[0];if(uu)sendMsg(uu,'Tu solicitud de '+q.amt+' puntos fue rechazada.')}
+  if(b.dataset.d==='ok'){q.st='aceptada';credit(q.uid,q.amt)}else{q.st='rechazada';var uu=U.filter(function(x){return x.id===q.uid})[0];if(uu)sendMsg(uu,'Tu solicitud simulada de '+Number(q.amt).toFixed(2)+' USDT fue rechazada.')}
   saveRQ();drawAdm()};
-var wmode_=null;
 function wmsg(t){$('wm').textContent=t}
-function wopen(m){if(busy)return;wmode_=m;$('wp').hidden=false;$('wl').textContent='Solicitud de depósito de puntos virtuales (demo)';$('depwalletvalue').textContent=WA;$('wa').value=1;wmsg('USDT (BEP 20) · Wallet ficticia. No envíes dinero: no se reciben pagos reales. La solicitud queda pendiente hasta que el administrador decida si acredita puntos.')}
-$('dep').onclick=function(){wopen('dep')};$('rec0').onclick=function(){if(busy)return;showTab('home');wopen('dep');$('wp').scrollIntoView({behavior:'smooth',block:'center'})};
-$('wok').onclick=function(){var v=r2(+$('wa').value);if(!(v>=1)){wmsg('Indica una cantidad válida de puntos virtuales.');return}addReq(v);wmsg('Solicitud registrada. El administrador revisará y, si corresponde, acreditará los puntos. USDT (BEP20) · DEMO: no envíes dinero; no se procesa ningún pago.');};
+function wopen(){if(busy||!ME)return;$('wp').hidden=false;$('wa').value='';wmsg('Esta pantalla es una simulación. La dirección mostrada es ficticia: no envíes fondos. Enviar la solicitud no confirma ningún pago.')}
+$('rec0').onclick=function(){if(busy)return;if(!ME){openReg('Inicia sesión para solicitar una recarga.');return}showTab('home');wopen();$('wp').scrollIntoView({behavior:'smooth',block:'center'})};
+$('wok').onclick=function(){if(!ME){wmsg('Inicia sesión primero.');return}var v=r2(+$('wa').value);if(!(v>0)){wmsg('Indica una cantidad válida de USDT.');return}addReq(v);wmsg('Solicitud simulada enviada al panel del administrador. No se ha realizado ni verificado ninguna transferencia.');$('wok').disabled=true;setTimeout(function(){$('wok').disabled=false},1200)};
 /* poker omaha */
 function e5(h){var r=h.map(function(c){return c.r===1?14:c.r}).sort(function(a,b){return b-a}),fl=h.every(function(c){return c.s===h[0].s}),cn={};
   r.forEach(function(x){cn[x]=(cn[x]||0)+1});
@@ -653,7 +658,7 @@ function showTab(k){
 }
 $('nav').innerHTML='<button data-t="home" aria-pressed="true">🏠 Inicio</button>'+CATS.map(function(c){return '<button data-t="'+c[1]+'" aria-pressed="false">'+c[0]+' '+c[1]+'</button>'}).join('');
 $('nav').onclick=function(e){var b=e.target.closest('[data-t]');if(!b||busy)return;showTab(b.dataset.t)};
-$('home').appendChild($('wcard'));$('home').appendChild($('wp'));
+
 showTab('home');
 $('lobby').onclick=function(e){
   var b=e.target.closest('[data-g]');if(!b)return;
