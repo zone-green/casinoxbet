@@ -130,7 +130,7 @@ button.card{min-height:90px}
 .go{background:linear-gradient(#e6c264,#b8892f);box-shadow:0 3px 0 #7a5a16}
 .go:active{transform:translateY(2px)}
 section.panel{background:radial-gradient(ellipse at 50% 0,#1a6a50,#0f3d2e 72%);box-shadow:inset 0 0 0 3px rgba(201,162,74,.22),0 8px 22px rgba(0,0,0,.45)}
-#reg,#inbox{position:fixed;inset:0;z-index:45;background:rgba(10,3,8,.92);display:grid;place-items:center;padding:20px}
+#reg,#inbox,#prof{position:fixed;inset:0;z-index:45;background:rgba(10,3,8,.92);display:grid;place-items:center;padding:20px}
 .regbox{background:var(--felt);border:2px solid var(--brass);border-radius:10px;padding:20px;width:100%;max-width:380px;max-height:90vh;overflow:auto}
 .bellb{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));left:10px;z-index:30;background:var(--ink);border-radius:6px;padding:6px 12px;min-height:40px}
 .bellb.new{animation:blink 1s steps(2) infinite}
@@ -210,7 +210,7 @@ section.panel{border-radius:16px;border:1px solid rgba(226,189,99,.5);background
 <div class="bulbs"></div>
 
 <nav class="nav" id="nav"></nav>
-<div id="home"><section class="panel welcome"><h2>¡Bienvenido al Casino<span id="wname"></span>!</h2><p class="desc">Elige una categoría arriba para ver todos sus juegos. Juegas con saldo en USDT. Puedes recargar y retirar cuando quieras.</p><ul class="rules"><li>Recargas y retiros en USDT por la red BEP20.</li><li>Los retiros se confirman con un código enviado a tu correo y los revisa el administrador antes de enviarse a tu billetera.</li><li>Retiro mínimo: 1 USDT.</li><li>Solo para mayores de 18 años. Apuesta únicamente lo que puedas perder.</li></ul></section></div>
+<div id="home"><section class="panel welcome"><h2>¡Bienvenido al Casino<span id="wname"></span>!<img id="wav" alt="" hidden style="width:40px;height:40px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-left:8px"></h2><p class="desc">Elige una categoría arriba para ver todos sus juegos. Juegas con saldo en USDT. Puedes recargar y retirar cuando quieras.</p><ul class="rules"><li>Recargas y retiros en USDT por la red BEP20.</li><li>Los retiros se confirman con un código enviado a tu correo y los revisa el administrador antes de enviarse a tu billetera.</li><li>Retiro mínimo: 1 USDT.</li><li>Solo para mayores de 18 años. Apuesta únicamente lo que puedas perder.</li></ul></section></div>
 <div id="lobby"></div>
 
 <div id="game" hidden>
@@ -219,10 +219,11 @@ section.panel{border-radius:16px;border:1px solid rgba(226,189,99,.5);background
 <section class="panel"><div id="stage"></div><div id="msg" role="status" aria-live="polite"></div></section>
 </div>
 
-<p class="foot">Juega con responsabilidad · Solo mayores de 18 años.<br><button id="adm0">Administrador</button> <button id="swp">Cerrar sesión</button></p>
+<p class="foot">Juega con responsabilidad · Solo mayores de 18 años.<br><button id="adm0">Administrador</button> <button id="prof0" hidden>Mi perfil</button> <button id="swp">Cerrar sesión</button></p>
 </main>
 <button id="bell" class="bellb" hidden>🔔 <b id="bn">0</b></button>
 <div id="reg" hidden><div class="regbox"><h2 id="regt">Iniciar sesión</h2><p class="desc">Tu cuenta funciona en cualquier teléfono o computadora con el mismo correo y contraseña.</p><div id="regnw" hidden><label class="label" for="regname">Nombre</label><input type="text" id="regname" maxlength="30" placeholder="Tu nombre" autocomplete="name"></div><label class="label" for="regemail">Correo electrónico</label><input type="email" id="regemail" maxlength="120" placeholder="correo@ejemplo.com" autocomplete="email"><label class="label" for="regpass">Contraseña</label><input type="password" id="regpass" maxlength="100" placeholder="Mínimo 8 caracteres" autocomplete="current-password"><button class="go" id="regok">Entrar</button><button type="button" id="regsw" style="background:none;border:0;color:var(--brass);min-height:44px;width:100%;text-decoration:underline">¿No tienes cuenta? Crear una</button><p class="desc" id="regm"></p></div></div>
+<div id="prof" hidden><div class="regbox"><h2>Mi perfil</h2><div style="display:flex;align-items:center;gap:14px;margin:10px 0"><img id="pav" alt="Foto de perfil" style="width:84px;height:84px;border-radius:50%;object-fit:cover;border:2px solid var(--brass)"><div><b id="pname"></b><br><small id="pemail"></small></div></div><label class="label" for="pfile">Foto de perfil (opcional)</label><input type="file" accept="image/*" id="pfile"><h3 style="margin-top:18px">Cambiar contraseña</h3><label class="label" for="pcur">Contraseña actual</label><input type="password" id="pcur" autocomplete="current-password"><label class="label" for="pnew">Nueva contraseña</label><input type="password" id="pnew" autocomplete="new-password" placeholder="Mínimo 10 caracteres"><label class="label" for="pnew2">Repite la nueva contraseña</label><input type="password" id="pnew2" autocomplete="new-password"><p class="desc">Usa 10 o más caracteres y mezcla letras, números y símbolos. No uses la misma contraseña de otros sitios.</p><button class="go" id="pchg">Cambiar contraseña</button><p class="desc" id="pm"></p><button class="go" id="pclose">Cerrar</button></div></div>
 <div id="inbox" hidden><div class="regbox"><h2>Mensajes</h2><div id="inbody"></div><button class="go" id="inx">Cerrar</button></div></div>
 <div id="pk" hidden><div class="pkbar"><button id="pkx">← Salir</button><b>Póker Omaha</b><span id="pkb"></span></div>
 <div class="pkt"><div class="hand" id="pkd"></div><div class="pot">Bote: <b id="pkp">0</b></div><div class="hand" id="pkbd"></div><div class="hand" id="pkh"></div><div class="pk-info" id="pkm"></div></div>
@@ -525,12 +526,14 @@ function openVP(){
 var HI=[];try{HI=JSON.parse(localStorage.getItem('casino-hist')||'[]')}catch(e){}
 function hist(t){HI.unshift(t);HI=HI.slice(0,4);try{localStorage.setItem('casino-hist',JSON.stringify(HI))}catch(e){}}
 function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
-function hello(){$('wname').textContent=ME?', '+ME.name:''}
+function hello(){$('wname').textContent=ME?', '+ME.name:'';$('prof0').hidden=!ME;setAv(ME)}
 function drawBell(){var n=ME?(ME.msgs||[]).filter(function(m){return !m.r}).length:0;$('bell').hidden=!ME;$('bn').textContent=n;$('bell').className='bellb'+(n?' new':'')}
 function trErr(e){var m=(e&&e.message)||'';
   if(/invalid login/i.test(m))return 'Correo o contraseña incorrectos.';
   if(/already registered|already been registered/i.test(m))return 'Ese correo ya tiene cuenta. Toca "¿No tienes cuenta?" otra vez para volver a Entrar.';
   if(/rate limit|too many|after \d+ seconds/i.test(m))return 'Demasiados intentos. Espera unos minutos y vuelve a probar.';
+  if(/different from the old/i.test(m))return 'La nueva contraseña debe ser distinta a la actual.';
+  if(/weak|at least|should contain/i.test(m))return 'Esa contraseña es muy débil. Usa más caracteres, números y símbolos.';
   if(/otp|token|expired/i.test(m))return 'Código incorrecto o vencido.';
   return m||'No se pudo completar. Intenta de nuevo.'}
 function syncBal(){var d=r2(bal-sent);if(!d||!ME)return;sent=bal;pend++;
@@ -571,7 +574,7 @@ $('inx').onclick=function(){if(ME&&(ME.msgs||[]).some(function(m){return !m.r}))
 /* administrador */
 async function drawAdm(){
   try{
-    var a=await sb.from('profiles').select('*').order('created_at',{ascending:false});
+    var a=await sb.from('profiles').select('id,name,email,bal,banned,is_admin,created_at').order('created_at',{ascending:false});
     var b=await sb.from('requests').select('*,profiles(name,email)').order('created_at',{ascending:false}).limit(60);
     UL=a.data||[];RL=b.data||[];
   }catch(e){}
@@ -625,6 +628,35 @@ $('wdok').onclick=async function(){var w=wdRead(),c=$('wdcode').value.trim();if(
     $('wdc').hidden=true;$('wdaddr').value='';$('wdamt').value='';$('wdm').textContent='Solicitud de retiro enviada. El administrador la revisará y enviará tus USDT.';
   }catch(e){$('wdm').textContent=trErr(e)}
   $('wdok').disabled=false};
+/* mi perfil */
+var PLACE='data:image/svg+xml;utf8,'+encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96'><rect width='96' height='96' fill='#3a3a3a'/><circle cx='48' cy='38' r='17' fill='#888'/><ellipse cx='48' cy='86' rx='30' ry='24' fill='#888'/></svg>");
+function setAv(u){var a=u&&u.avatar;$('wav').hidden=!a;if(a)$('wav').src=a;$('pav').src=a||PLACE}
+function pmsg(t){$('pm').textContent=t}
+$('prof0').onclick=function(){if(busy||!ME)return;$('pname').textContent=ME.name;$('pemail').textContent=ME.email;$('pcur').value='';$('pnew').value='';$('pnew2').value='';pmsg('');setAv(ME);$('prof').hidden=false};
+$('pclose').onclick=function(){$('prof').hidden=true};
+$('pfile').onchange=function(){var f=this.files&&this.files[0];this.value='';if(!f)return;
+  if(!/^image\//.test(f.type)){pmsg('Elige una imagen.');return}
+  var rd=new FileReader();
+  rd.onload=function(){var im=new Image();
+    im.onload=function(){var c=document.createElement('canvas');c.width=c.height=160;var x=c.getContext('2d'),m=Math.min(im.width,im.height);
+      x.drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,160,160);
+      var url=c.toDataURL('image/jpeg',0.8);
+      sb.rpc('set_avatar',{p_avatar:url}).then(function(r){if(r.error){pmsg(r.error.message);return}ME.avatar=url;setAv(ME);pmsg('Foto actualizada.')})};
+    im.onerror=function(){pmsg('No se pudo leer esa imagen. Prueba con otra.')};
+    im.src=rd.result};
+  rd.readAsDataURL(f)};
+$('pchg').onclick=async function(){var cur=$('pcur').value,n1=$('pnew').value,n2=$('pnew2').value;
+  if(!cur){pmsg('Escribe tu contraseña actual.');return}
+  if(n1.length<10){pmsg('La nueva contraseña debe tener al menos 10 caracteres.');return}
+  if(n1!==n2){pmsg('Las contraseñas nuevas no coinciden.');return}
+  if(n1===cur){pmsg('La nueva contraseña debe ser distinta a la actual.');return}
+  $('pchg').disabled=true;
+  try{
+    var r=await sb.auth.signInWithPassword({email:ME.email,password:cur});if(r.error)throw new Error('La contraseña actual no es correcta.');
+    var u=await sb.auth.updateUser({password:n1});if(u.error)throw u.error;
+    $('pcur').value='';$('pnew').value='';$('pnew2').value='';pmsg('Contraseña cambiada. Úsala la próxima vez que inicies sesión.');
+  }catch(e){pmsg(trErr(e))}
+  $('pchg').disabled=false};
 hello();drawBell();$('adm0').hidden=true;
 loadMe(true);
 setInterval(function(){if(ME&&!busy&&!pend)loadMe()},20000);
