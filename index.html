@@ -236,7 +236,9 @@ section.panel{border-radius:16px;border:1px solid rgba(226,189,99,.5);background
 var $=function(i){return document.getElementById(i)};
 var bal=0,amt=1,sel=null,busy=false,cur={};
 var ME=null,sent=0,pend=0,Q=Promise.resolve(),UL=[],RL=[];
-var sb=supabase.createClient('https://athifohhitrhcbubivwo.supabase.co','sb_publishable_WDyRzJit-TW1XL4_-k8jyA_7x5v-MEh');
+var SBU='https://athifohhitrhcbubivwo.supabase.co',SBK='sb_publishable_WDyRzJit-TW1XL4_-k8jyA_7x5v-MEh';
+var sb=supabase.createClient(SBU,SBK);
+var sbv=supabase.createClient(SBU,SBK,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,storageKey:'verify-tmp'}});
 var stage=$('stage');
 function r2(x){return Math.round(x*100)/100}
 function paint(){$('bal').textContent=bal.toFixed(2);syncBal()}
@@ -529,6 +531,7 @@ function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&am
 function hello(){$('wname').textContent=ME?', '+ME.name:'';$('prof0').hidden=!ME;setAv(ME)}
 function drawBell(){var n=ME?(ME.msgs||[]).filter(function(m){return !m.r}).length:0;$('bell').hidden=!ME;$('bn').textContent=n;$('bell').className='bellb'+(n?' new':'')}
 function trErr(e){var m=(e&&e.message)||'';
+  if(/failed to fetch|networkerror|load failed|network request/i.test(m))return 'Sin conexión. Revisa tu internet e intenta de nuevo.';
   if(/invalid login/i.test(m))return 'Correo o contraseña incorrectos.';
   if(/already registered|already been registered/i.test(m))return 'Ese correo ya tiene cuenta. Toca "¿No tienes cuenta?" otra vez para volver a Entrar.';
   if(/rate limit|too many|after \d+ seconds/i.test(m))return 'Demasiados intentos. Espera unos minutos y vuelve a probar.';
@@ -538,18 +541,26 @@ function trErr(e){var m=(e&&e.message)||'';
   return m||'No se pudo completar. Intenta de nuevo.'}
 function syncBal(){var d=r2(bal-sent);if(!d||!ME)return;sent=bal;pend++;
   Q=Q.then(function(){return sb.rpc('apply_delta',{d:d})}).then(function(r){pend--;if(r.error)loadMe(true)}).catch(function(){pend--})}
+function dropMe(t){ME=null;bal=0;sent=0;try{localStorage.removeItem('casino-prof')}catch(e){}$('bal').textContent='0.00';$('adm0').hidden=true;hello();drawBell();openReg(t);return false}
 async function loadMe(force){
-  var s=await sb.auth.getSession();
-  if(!s.data.session){ME=null;return false}
-  var uid=s.data.session.user.id;
-  var p=await sb.from('profiles').select('*').eq('id',uid).single();
-  if(p.error||!p.data){ME=null;return false}
-  if(p.data.banned){await sb.auth.signOut();ME=null;bal=0;sent=0;$('bal').textContent='0.00';$('adm0').hidden=true;hello();drawBell();openReg('Esta cuenta fue suspendida por el administrador.');return false}
-  var m=await sb.from('msgs').select('*').eq('uid',uid).order('created_at',{ascending:false}).limit(20);
-  ME=p.data;ME.msgs=(m.data||[]).map(function(x){return {t:x.body,r:x.read?1:0,d:x.created_at}});
-  if(force||(!busy&&!pend)){bal=Number(ME.bal)||0;sent=bal}
-  $('bal').textContent=bal.toFixed(2);$('adm0').hidden=!ME.is_admin;$('reg').hidden=true;hello();drawBell();
-  return true}
+  try{
+    var s=await sb.auth.getSession();
+    if(s.error){if(s.error.name==='AuthRetryableFetchError'||!s.error.status)return !!ME;return dropMe()}
+    if(!s.data.session)return dropMe();
+    var uid=s.data.session.user.id;
+    var p=await sb.from('profiles').select('*').eq('id',uid).single();
+    if(p.error&&!p.error.code)return !!ME;
+    if(p.error||!p.data)return dropMe();
+    if(p.data.banned){try{await sb.auth.signOut()}catch(e){}return dropMe('Esta cuenta fue suspendida por el administrador.')}
+    var old=(ME&&ME.id===uid)?(ME.msgs||[]):[];
+    ME=p.data;ME.msgs=old;
+    if(force||(!busy&&!pend)){bal=Number(ME.bal)||0;sent=bal}
+    try{localStorage.setItem('casino-prof',JSON.stringify({id:ME.id,name:ME.name,email:ME.email,bal:ME.bal,is_admin:ME.is_admin,avatar:ME.avatar||null}))}catch(e){}
+    $('bal').textContent=bal.toFixed(2);$('adm0').hidden=!ME.is_admin;$('reg').hidden=true;hello();drawBell();
+    sb.from('msgs').select('*').eq('uid',uid).order('created_at',{ascending:false}).limit(20).then(function(m){
+      if(ME&&ME.id===uid&&!m.error){ME.msgs=(m.data||[]).map(function(x){return {t:x.body,r:x.read?1:0,d:x.created_at}});drawBell()}});
+    return true
+  }catch(e){return !!ME}}
 var regMode='in';
 function setMode(m){regMode=m;$('regnw').hidden=m==='in';$('regt').textContent=m==='in'?'Iniciar sesión':'Crear cuenta';$('regok').textContent=m==='in'?'Entrar':'Crear cuenta';$('regsw').textContent=m==='in'?'¿No tienes cuenta? Crear una':'Ya tengo cuenta';$('regpass').autocomplete=m==='in'?'current-password':'new-password'}
 function openReg(t){$('reg').hidden=false;$('regm').textContent=t||'';$('regname').value='';$('regemail').value='';$('regpass').value='';setMode('in')}
@@ -559,16 +570,16 @@ $('regok').onclick=async function(){
   if(regMode==='up'&&n.length<2){$('regm').textContent='Escribe un nombre de al menos 2 letras.';return}
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){$('regm').textContent='Escribe un correo electrónico válido.';return}
   if(pass.length<8){$('regm').textContent='La contraseña debe tener al menos 8 caracteres.';return}
-  $('regok').disabled=true;
+  var lbl=$('regok').textContent;$('regok').disabled=true;$('regok').textContent=regMode==='up'?'Creando…':'Entrando…';$('regm').textContent='';
   try{
     var r=regMode==='up'?await sb.auth.signUp({email:email,password:pass,options:{data:{name:n}}}):await sb.auth.signInWithPassword({email:email,password:pass});
     if(r.error)throw r.error;
     if(!r.data.session){$('regm').textContent='Revisa tu correo y confirma tu cuenta para entrar.';return}
     if(await loadMe(true))showTab('home');else $('regm').textContent='No se pudo cargar tu cuenta. Intenta de nuevo.';
   }catch(err){$('regm').textContent=trErr(err)}
-  finally{$('regok').disabled=false}
+  finally{$('regok').disabled=false;$('regok').textContent=lbl}
 };
-$('swp').onclick=async function(){if(busy)return;await Q;await sb.auth.signOut();ME=null;bal=0;sent=0;$('bal').textContent='0.00';$('adm0').hidden=true;hello();drawBell();openReg()};
+$('swp').onclick=async function(){if(busy)return;await Q;try{await sb.auth.signOut()}catch(e){}dropMe()};
 $('bell').onclick=function(){if(!ME)return;$('inbody').innerHTML=(ME.msgs||[]).length?ME.msgs.map(function(m){return '<div class="msgc'+(m.r?'':' un')+'">'+esc(m.t)+'<br><small>'+new Date(m.d).toLocaleString()+'</small></div>'}).join(''):'No tienes mensajes.';$('inbox').hidden=false};
 $('inx').onclick=function(){if(ME&&(ME.msgs||[]).some(function(m){return !m.r})){ME.msgs.forEach(function(m){m.r=1});sb.rpc('read_msgs').then(function(){});drawBell()}$('inbox').hidden=true};
 /* administrador */
@@ -645,19 +656,40 @@ $('pfile').onchange=function(){var f=this.files&&this.files[0];this.value='';if(
     im.onerror=function(){pmsg('No se pudo leer esa imagen. Prueba con otra.')};
     im.src=rd.result};
   rd.readAsDataURL(f)};
+function tmo(pr,ms){return Promise.race([pr,new Promise(function(_,rej){setTimeout(function(){rej(new Error('Se agotó el tiempo. Revisa tu conexión e intenta de nuevo.'))},ms)})])}
 $('pchg').onclick=async function(){var cur=$('pcur').value,n1=$('pnew').value,n2=$('pnew2').value;
   if(!cur){pmsg('Escribe tu contraseña actual.');return}
   if(n1.length<10){pmsg('La nueva contraseña debe tener al menos 10 caracteres.');return}
   if(n1!==n2){pmsg('Las contraseñas nuevas no coinciden.');return}
   if(n1===cur){pmsg('La nueva contraseña debe ser distinta a la actual.');return}
-  $('pchg').disabled=true;
+  $('pchg').disabled=true;$('pchg').textContent='Cambiando…';pmsg('');
   try{
-    var r=await sb.auth.signInWithPassword({email:ME.email,password:cur});if(r.error)throw new Error('La contraseña actual no es correcta.');
-    var u=await sb.auth.updateUser({password:n1});if(u.error)throw u.error;
-    $('pcur').value='';$('pnew').value='';$('pnew2').value='';pmsg('Contraseña cambiada. Úsala la próxima vez que inicies sesión.');
+    var r=await tmo(sbv.auth.signInWithPassword({email:ME.email,password:cur}),20000);
+    if(r.error)throw (/invalid login/i.test(r.error.message)?new Error('La contraseña actual no es correcta.'):r.error);
+    var u=await tmo(sbv.auth.updateUser({password:n1}),20000);
+    if(u.error)throw u.error;
+    $('pcur').value='';$('pnew').value='';$('pnew2').value='';pmsg('✓ Contraseña cambiada. Úsala la próxima vez que inicies sesión.');
   }catch(e){pmsg(trErr(e))}
-  $('pchg').disabled=false};
-hello();drawBell();$('adm0').hidden=true;
+  $('pchg').disabled=false;$('pchg').textContent='Cambiar contraseña';
+  try{$('pm').scrollIntoView({block:'nearest'})}catch(e){}};
+/* ojito para ver la contraseña */
+var EYE='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+var EYEOFF='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.9 10.9 0 0 1 12 20C5 20 1 12 1 12a18.6 18.6 0 0 1 5.06-5.94M9.9 4.24A10.9 10.9 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>';
+function addEye(id){var i=$(id),cs=getComputedStyle(i),w=document.createElement('div');
+  w.style.cssText='position:relative;margin:'+cs.marginTop+' 0 '+cs.marginBottom;
+  i.parentNode.insertBefore(w,i);w.appendChild(i);i.style.margin='0';i.style.paddingRight='48px';
+  var b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Mostrar u ocultar contraseña');
+  b.style.cssText='position:absolute;right:2px;top:50%;transform:translateY(-50%);width:44px;height:44px;min-height:0;margin:0;padding:0;background:none;border:0;box-shadow:none;color:var(--brass);display:grid;place-items:center;cursor:pointer';
+  b.innerHTML=EYE;
+  b.onclick=function(){var show=i.type==='password';i.type=show?'text':'password';b.innerHTML=show?EYEOFF:EYE};
+  w.appendChild(b)}
+['regpass','pcur','pnew','pnew2'].forEach(addEye);
+/* arranque: si ya había sesión, entra directo aunque la conexión esté mala */
+$('adm0').hidden=true;
+(function(){var c=null,t=false;
+  try{c=JSON.parse(localStorage.getItem('casino-prof')||'null');for(var n=0;n<localStorage.length;n++){if(/^sb-.+-auth-token$/.test(localStorage.key(n)))t=true}}catch(e){}
+  if(c&&t&&c.id){ME=c;ME.msgs=[];bal=Number(c.bal)||0;sent=bal;$('bal').textContent=bal.toFixed(2);$('adm0').hidden=!ME.is_admin;$('reg').hidden=true}})();
+hello();drawBell();
 loadMe(true);
 setInterval(function(){if(ME&&!busy&&!pend)loadMe()},20000);
 /* poker omaha */
